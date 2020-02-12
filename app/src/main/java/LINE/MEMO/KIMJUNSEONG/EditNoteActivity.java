@@ -1,6 +1,8 @@
 package LINE.MEMO.KIMJUNSEONG;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -35,7 +37,7 @@ public class EditNoteActivity extends AppCompatActivity {
             onSaveNote();
         if (id==R.id.access_gallery)
         {
-            ;
+            startActivity(new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA));
         }
         return super.onOptionsItemSelected(item);
     }
