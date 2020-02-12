@@ -13,16 +13,21 @@ public class Note {
     @ColumnInfo(name = "date")
     public long date;
 
+
+
     public Note(String text,long date){
         this.text=text;
         this.date=date;
+
     }
     public String getText(){
         return text;
     }
+
     public void setText(String text){
         this.text=text;
     }
+
     public long getDate(){
         return date;
     }

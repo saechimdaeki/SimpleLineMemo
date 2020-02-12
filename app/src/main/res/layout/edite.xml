@@ -1,22 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
 >
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="wrap_content"
+        >
         <EditText
             android:id="@+id/input_note"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="top"
-            android:background="#fff"
-            android:ems="10"
-            android:gravity="top"
-            android:inputType="textMultiLine"
+            android:background="@null"
+            android:gravity="center_vertical"
+            android:hint="제목을 입력하세요."
+            android:textSize="20dp"
 
             />
+
+
     </com.google.android.material.textfield.TextInputLayout>
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/transparent_black"
+        />
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="632dp">
+
+        <EditText
+            android:id="@+id/input_note_body"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:inputType="textMultiLine"
+            android:hint="메모를 입력하세요"
+            android:gravity="left|top"
+
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>

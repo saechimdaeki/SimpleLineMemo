@@ -14,7 +14,6 @@ public class WriteFrag extends Fragment {
     private View view;
   /*
     여기서 글을씁시다잉
-
    */
 
     @Nullable

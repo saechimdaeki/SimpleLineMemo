@@ -7,7 +7,7 @@ import java.util.Locale;
 
 public class NoteDate {
     public static String format(long longtype){
-        DateFormat dateFormat=new SimpleDateFormat("EEE, dd MMM yyyy 'at' hh:mm aaa", Locale.KOREA);
+        DateFormat dateFormat=new SimpleDateFormat("마지막 수정: yyyy년 MM월 dd일", Locale.KOREA);
         return dateFormat.format(new Date(longtype));
     }
 }

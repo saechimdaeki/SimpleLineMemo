@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private note_adapter adapter;
     private NotesDao dao;
     private Toolbar supportActionBar;
-
+    private  BackButtonPressHandler backButtonPressHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this,LoadingActivity.class);
             startActivity(intent);
         }
+        backButtonPressHandler=new BackButtonPressHandler(this);
         Toolbar toolbar=(Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         recyclerView=findViewById(R.id.notes_list);
@@ -100,6 +101,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadnote();
+    }
+    @Override
+    public void onBackPressed(){
+        backButtonPressHandler.onBackPressed();
     }
 
 }

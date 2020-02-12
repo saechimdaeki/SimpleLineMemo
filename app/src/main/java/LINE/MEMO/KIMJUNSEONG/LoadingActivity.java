@@ -23,6 +23,6 @@ public class LoadingActivity extends Activity {
             public void run() {
                 finish();
             }
-        }, 3000); //ì–´ì°¨í”¼ ë°±ë²„íŠ¼ìœ¼ë¡œ ë„˜ì–´ê°ˆìˆ˜ìžˆìœ¼ë‹ˆê¹Œ ;;
+        }, 3000); //¾îÂ÷ÇÇ ¹é¹öÆ°À¸·Î ³Ñ¾î°¥¼öÀÖÀ¸´Ï±î ;;
     }
 }
