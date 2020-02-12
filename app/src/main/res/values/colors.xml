@@ -29,4 +29,11 @@
     <color name="transparent">#AA000000</color>
     <color name="clock_transparent">#AA000000</color>
     <color name="github_contributions_light_green">#8CC665</color>
+
+    <color name="view_backg_color">#c7c7C7</color>
+
+    <!--  colors for dark theme -->
+    <color name="colorPrimary_dark">#212121</color>
+    <color name="colorAccent_dark" >#FF9800</color>
+    <color name="colorPrimaryDark_dark" >#DE000000</color>
 </resources>
