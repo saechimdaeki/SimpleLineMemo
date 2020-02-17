@@ -14,7 +14,7 @@ public abstract class callback implements ActionMode.Callback {
         this.action=actionMode;
         this.countitem=menu.findItem(R.id.action_checked_count);
         this.shareItem=menu.findItem(R.id.action_share_note);
-        return false;
+        return true;
     }
 
     @Override
@@ -29,6 +29,14 @@ public abstract class callback implements ActionMode.Callback {
 
     }
     public void setCount(String checkedCount){
+        if(countitem!=null)
         this.countitem.setTitle(checkedCount);
+    }
+    public void changeShareItemVisible(boolean b) {
+        shareItem.setVisible(b);
+    }
+
+    public ActionMode getAction() {
+        return action;
     }
 }

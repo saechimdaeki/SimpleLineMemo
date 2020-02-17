@@ -7,6 +7,7 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
     private NotesDao dao;
     private Toolbar supportActionBar;
     private callback actioncallback;
+    private int chackedCount = 0;
+    private FloatingActionButton fab;
     private  BackButtonPressHandler backButtonPressHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        FloatingActionButton fab=(FloatingActionButton) findViewById(R.id.fab);
+         fab=(FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,25 +65,12 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
 
     }
     private void onAddnoewnote(){
-        /*
-        if(notes!=null)
-            notes.add(new note("this is new note",new Date().getTime()));
-        if(n_adapter!=null)
-            n_adapter.notifyDataSetChanged();
 
-         */
         startActivity(new Intent(this, EditNoteActivity.class));
     }
     private void loadnote(){
         this.notes=new ArrayList<>();
-        /*
-        for (int i=0; i<12; i++){
-            notes.add(new note("라인플러스 김준성과제",new Date().getTime()));
-        }
-        n_adapter=new note_adapter(this,notes);
-        recyclerView.setAdapter(n_adapter);
-    //    n_adapter.notifyDataSetChanged();
-    */
+
         List<Note> list=dao.getNotes();
         this.notes.addAll(list);
 
@@ -91,10 +81,10 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -126,61 +116,78 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
 
     @Override
     public void onNoteLongClick(Note note) {
-        /*
-        new AlertDialog.Builder(this)
-                .setTitle("LINE PLUS 김준성")
-                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                })
-                .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dao.deleteNote(note);
-                        loadnote();
-                    }
-                })
-                .setNegativeButton("공유", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent share=new Intent(Intent.ACTION_SEND);
-                        share.setType("text/plain");
-                        share.putExtra(Intent.EXTRA_TEXT,note.getText()+"\n"+"by 김준성");
-                        startActivity(share);
-                    }
-                })
-                .create()
-                .show();
-         */
+
         note.setChecked(true);
+        chackedCount=1;
         adapter.setMultiCheck(true);
+        adapter.setListener(new NoteEventListener() {
+            @Override
+            public void onNoteClick(Note note) {
+                note.setChecked(!note.isChecked());
+                if(note.isChecked())
+                    chackedCount++;
+                else chackedCount--;
+                if(chackedCount>1){
+                    actioncallback.changeShareItemVisible(false);
+                }else actioncallback.changeShareItemVisible(true);
+                if(chackedCount==0){
+                    actioncallback.getAction().finish();
+                }
+                actioncallback.setCount(chackedCount+"/"+notes.size());
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNoteLongClick(Note note) {
+
+            }
+        });
         actioncallback=new callback() {
             @Override
             public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                adapter.setListener(new NoteEventListener() {
-                    @Override
-                    public void onNoteClick(Note note) {
-                        note.setChecked(!note.isChecked());
-                        adapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onNoteLongClick(Note note) {
-
-                    }
-                });
+                if(menuItem.getItemId()==R.id.action_delete_notes)
+                    onDeleteMultiNotes();
+                else if(menuItem.getItemId()==R.id.action_share_note)
+                    onSharedNote();
+                actionMode.finish();
                 return false;
             }
         };
         startActionMode(actioncallback);
+        fab.setVisibility(View.GONE);
+        actioncallback.setCount(chackedCount+"/"+notes.size());
+
 
     }
+
     @Override
     public void onActionModeFinished(ActionMode mode){
         super.onActionModeFinished(mode);
+
         adapter.setMultiCheck(false);
         adapter.setListener(this);
+        fab.setVisibility(View.VISIBLE);
     }
+    private void onDeleteMultiNotes(){
+        List<Note> chackedNotes = adapter.getCheckedNotes();
+        if (chackedNotes.size() != 0) {
+            for (Note note : chackedNotes) {
+                dao.deleteNote(note);
+            }
+
+            loadnote();
+            Toast.makeText(this, chackedNotes.size() + "메모 삭제완료", Toast.LENGTH_SHORT).show();
+        } else Toast.makeText(this, "메모가 선택되지 않았네요 ", Toast.LENGTH_SHORT).show();
+    }
+    private void onSharedNote(){
+        Note note = adapter.getCheckedNotes().get(0);
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        String notetext = note.getText() + "\n\n Create on : " +
+                NoteDate.format(note.getDate()) + "\n  By :" +
+                getString(R.string.app_name);
+        share.putExtra(Intent.EXTRA_TEXT, notetext);
+        startActivity(share);
+    }
+
 }

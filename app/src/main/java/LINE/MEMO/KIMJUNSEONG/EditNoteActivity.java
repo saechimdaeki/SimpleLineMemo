@@ -29,7 +29,7 @@ public class EditNoteActivity extends AppCompatActivity {
             int id = getIntent().getExtras().getInt(NOTE_EXTRA_KEY, 0);
             tmp = dao.getNoteById(id);
             inputNote.setText(tmp.getText());
-        }
+        }else inputNote.setFocusable(true);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

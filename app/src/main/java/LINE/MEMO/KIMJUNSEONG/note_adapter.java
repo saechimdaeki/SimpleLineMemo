@@ -11,12 +11,14 @@ import androidx.constraintlayout.widget.Placeholder;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> {
     public Context context;
     public ArrayList<Note> notelist;
     private NoteEventListener listener;
     private boolean multiCheck=false;
+
     public note_adapter(Context context,ArrayList<Note> notelist){
         this.notelist=notelist;
         this.context=context;
@@ -63,6 +65,16 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
     private Note getnotes(int i){
         return notelist.get(i);
     }
+
+    public List<Note> getCheckedNotes() {
+         List<Note> chckedNotes=new ArrayList<>();
+        for (Note n: this.notelist){
+            if(n.isChecked())
+                chckedNotes.add(n);
+        }
+        return chckedNotes;
+    }
+
     class noteholder extends RecyclerView.ViewHolder{
         TextView notetext,notedate;
         CheckBox checkBox;
@@ -78,6 +90,10 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
     }
     public void setMultiCheck(boolean multiCheck){
         this.multiCheck=multiCheck;
+        if(!multiCheck)
+            for(Note note:this.notelist){
+                note.setChecked(false);
+            }
         notifyDataSetChanged();
     }
 }
