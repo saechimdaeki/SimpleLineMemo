@@ -1,11 +1,13 @@
 package LINE.MEMO.KIMJUNSEONG;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,9 +18,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import static LINE.MEMO.KIMJUNSEONG.EditNoteActivity.NOTE_EXTRA_KEY;
+
 //import android.widget.Toolbar;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NoteEventListener{
     private RecyclerView recyclerView;
     private ArrayList<Note> notes;
     private note_adapter adapter;
@@ -38,11 +42,14 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         recyclerView=findViewById(R.id.notes_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        /*
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
+        */
         FloatingActionButton fab=(FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,10 +80,12 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(n_adapter);
     //    n_adapter.notifyDataSetChanged();
     */
-        List<Note> list=dao.getNotes(); //지금여기에러
+        List<Note> list=dao.getNotes();
         this.notes.addAll(list);
 
         this.adapter=new note_adapter(this,this.notes);
+        this.adapter.setListener(this);
+
         this.recyclerView.setAdapter(adapter);
     }
     @Override
@@ -107,4 +116,40 @@ public class MainActivity extends AppCompatActivity {
         backButtonPressHandler.onBackPressed();
     }
 
+    @Override
+    public void onNoteClick(Note note) {
+        Intent intent=new Intent(this,EditNoteActivity.class);
+        intent.putExtra(NOTE_EXTRA_KEY,note.getId());
+        startActivity(intent);
+    }
+
+    @Override
+    public void onNoteLongClick(final Note note) {
+        new AlertDialog.Builder(this)
+                .setTitle("LINE PLUS 김준성")
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dao.deleteNote(note);
+                        loadnote();
+                    }
+                })
+                .setNegativeButton("공유", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent share=new Intent(Intent.ACTION_SEND);
+                        share.setType("text/plain");
+                        share.putExtra(Intent.EXTRA_TEXT,note.getText()+"\n"+"by 김준성");
+                        startActivity(share);
+                    }
+                })
+                .create()
+                .show();;
+    }
 }

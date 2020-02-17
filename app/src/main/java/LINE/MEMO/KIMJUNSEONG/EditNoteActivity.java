@@ -15,15 +15,22 @@ public class EditNoteActivity extends AppCompatActivity {
     private EditText inputNote;
     private NotesDao dao;
     private EditText inputbody;
+    private Note tmp;
+    public static final String NOTE_EXTRA_KEY="note_id";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edite);
         inputNote = findViewById(R.id.input_note);
-        inputbody= findViewById(R.id.input_note_body);
+        inputbody = findViewById(R.id.input_note_body);
         dao = NotesDB.getInstance(this).notesDao();
-    }
 
+        if (getIntent().getExtras() != null) {
+            int id = getIntent().getExtras().getInt(NOTE_EXTRA_KEY, 0);
+            tmp = dao.getNoteById(id);
+            inputNote.setText(tmp.getText());
+        } else inputNote.setFocusable(true);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.note_menu, menu);
@@ -35,7 +42,7 @@ public class EditNoteActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.save_note)
             onSaveNote();
-        if (id==R.id.access_gallery)
+        else if (id==R.id.access_gallery)
         {
             startActivity(new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA));
         }
@@ -48,8 +55,21 @@ public class EditNoteActivity extends AppCompatActivity {
         String textbody=inputbody.getText().toString();
         if (!text.isEmpty()) {
             long date = new Date().getTime(); // get Courent  system time
-            Note note = new Note(text, date); // Create new Note
-            dao.insertNote(note); // insert and save note to database
+
+            if(tmp==null)
+            {
+                tmp=new Note(text,date);
+                dao.insertNote(tmp);
+            }else{
+                tmp.setText(text);
+                tmp.setDate(date);
+                dao.updateNote(tmp);
+            }
+           // Note note = new Note(text, date); // Create new Note
+          //  dao.insertNote(note); // insert and save note to database
+
+
+
 
             finish(); // return to the MainActivity
         }

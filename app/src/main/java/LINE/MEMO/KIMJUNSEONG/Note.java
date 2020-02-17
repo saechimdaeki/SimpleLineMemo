@@ -7,12 +7,14 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "notes")
 public class Note {
     @PrimaryKey(autoGenerate = true)
-    public int id;
+    private int id=-1;
     @ColumnInfo(name = "text")
-    public String text;
+    private String text;
     @ColumnInfo(name = "date")
-    public long date;
+    private long date;
+    public Note(){
 
+    }
 
 
     public Note(String text,long date){

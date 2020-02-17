@@ -25,7 +25,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoadingActivity"/>
-        <activity android:name=".EditNoteActivity"/>
+        <activity android:name=".EditNoteActivity"
+            android:parentActivityName=".MainActivity"
+            />
     </application>
 
 </manifest>

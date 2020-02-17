@@ -23,6 +23,6 @@ public class LoadingActivity extends Activity {
             public void run() {
                 finish();
             }
-        }, 3000); //어차피 백버튼으로 넘어갈수있으니까 ;;
+        }, 3000);
     }
 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.Placeholder;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> {
     public Context context;
     public ArrayList<Note> notelist;
+    private NoteEventListener listener;
     public note_adapter(Context context,ArrayList<Note> notelist){
         this.notelist=notelist;
         this.context=context;
@@ -27,10 +29,25 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
 
     @Override
     public void onBindViewHolder(noteholder holder, int position) {
-        Note n=getnotes(position);
-        if(n!=null){
-            holder.notetext.setText(n.getText());
-            holder.notedate.setText(NoteDate.format(n.getDate()));
+        final Note note=getnotes(position);
+        if(note!=null){
+            holder.notetext.setText(note.getText());
+            holder.notedate.setText(NoteDate.format(note.getDate()));
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onNoteClick(note);
+                }
+            });
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    listener.onNoteLongClick(note);
+                    return false;
+                }
+            });
+
+
         }
     }
 
@@ -48,5 +65,8 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
             notedate=itemView.findViewById(R.id.note_Date);
             notetext=itemView.findViewById(R.id.note);
         }
+    }
+    public void setListener(NoteEventListener listener){
+        this.listener=listener;
     }
 }
