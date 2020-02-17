@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,8 +30,7 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
     private ArrayList<Note> notes;
     private note_adapter adapter;
     private NotesDao dao;
-    private Toolbar supportActionBar;
-    private callback actioncallback;
+    private MainCallback actioncallback;
     private int chackedCount = 0;
     private FloatingActionButton fab;
     private  BackButtonPressHandler backButtonPressHandler;
@@ -78,11 +78,23 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         this.adapter.setListener(this);
 
         this.recyclerView.setAdapter(adapter);
+        showEmptyView();
+        swipeToDeleteHelper.attachToRecyclerView(recyclerView);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+    private void showEmptyView() {
+        if (notes.size() == 0) {
+            this.recyclerView.setVisibility(View.GONE);
+            findViewById(R.id.empty_notes_view).setVisibility(View.VISIBLE);
+
+        } else {
+            this.recyclerView.setVisibility(View.VISIBLE);
+            findViewById(R.id.empty_notes_view).setVisibility(View.GONE);
+        }
     }
 
 
@@ -116,48 +128,46 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
 
     @Override
     public void onNoteLongClick(Note note) {
-
         note.setChecked(true);
-        chackedCount=1;
+        chackedCount = 1;
         adapter.setMultiCheck(true);
         adapter.setListener(new NoteEventListener() {
             @Override
             public void onNoteClick(Note note) {
                 note.setChecked(!note.isChecked());
-                if(note.isChecked())
+                if (note.isChecked())
                     chackedCount++;
                 else chackedCount--;
-                if(chackedCount>1){
+                if (chackedCount > 1) {
                     actioncallback.changeShareItemVisible(false);
-                }else actioncallback.changeShareItemVisible(true);
-                if(chackedCount==0){
+                } else actioncallback.changeShareItemVisible(true);
+
+                if (chackedCount == 0) {
                     actioncallback.getAction().finish();
                 }
-                actioncallback.setCount(chackedCount+"/"+notes.size());
+                actioncallback.setCount(chackedCount + "/" + notes.size());
                 adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onNoteLongClick(Note note) {
-
             }
         });
-        actioncallback=new callback() {
+        actioncallback = new MainCallback() {
             @Override
             public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                if(menuItem.getItemId()==R.id.action_delete_notes)
+                if (menuItem.getItemId() == R.id.action_delete_notes)
                     onDeleteMultiNotes();
-                else if(menuItem.getItemId()==R.id.action_share_note)
+                else if (menuItem.getItemId() == R.id.action_share_note)
                     onSharedNote();
                 actionMode.finish();
                 return false;
             }
+
         };
         startActionMode(actioncallback);
         fab.setVisibility(View.GONE);
-        actioncallback.setCount(chackedCount+"/"+notes.size());
-
-
+        actioncallback.setCount(chackedCount + "/" + notes.size());
     }
 
     @Override
@@ -183,11 +193,58 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         Note note = adapter.getCheckedNotes().get(0);
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("text/plain");
-        String notetext = note.getText() + "\n\n Create on : " +
-                NoteDate.format(note.getDate()) + "\n  By :" +
+        String notetext = note.getText() + "\n\n this note Create time : " +
+                NoteDate.format(note.getDate()) + "\n  by :" +
                 getString(R.string.app_name);
         share.putExtra(Intent.EXTRA_TEXT, notetext);
         startActivity(share);
     }
+    private ItemTouchHelper swipeToDeleteHelper = new ItemTouchHelper(
+            new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                @Override
+                public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                    return false;
+                }
+
+                @Override
+                public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+                    if (notes != null) {
+                        // get swiped note
+                        Note swipedNote = notes.get(viewHolder.getAdapterPosition());
+                        if (swipedNote != null) {
+                            swipeToDelete(swipedNote, viewHolder);
+
+                        }
+
+                    }
+                }
+            });
+    private void swipeToDelete(final Note swipedNote, final RecyclerView.ViewHolder viewHolder) {
+        new AlertDialog.Builder(MainActivity.this)
+                .setMessage("지울까요?")
+                .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dao.deleteNote(swipedNote);
+                        notes.remove(swipedNote);
+                        adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                        showEmptyView();
+
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        recyclerView.getAdapter().notifyItemChanged(viewHolder.getAdapterPosition());
+
+
+                    }
+                })
+                .setCancelable(false)
+                .create().show();
+
+    }
+
 
 }

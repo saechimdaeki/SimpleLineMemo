@@ -4,7 +4,7 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public abstract class callback implements ActionMode.Callback {
+public abstract class MainCallback implements ActionMode.Callback {
     private ActionMode action;
     private MenuItem countitem;
     private MenuItem shareItem;
