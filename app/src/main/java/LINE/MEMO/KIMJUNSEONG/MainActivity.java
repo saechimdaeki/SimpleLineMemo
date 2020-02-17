@@ -3,6 +3,7 @@ package LINE.MEMO.KIMJUNSEONG;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
     private note_adapter adapter;
     private NotesDao dao;
     private Toolbar supportActionBar;
+    private callback actioncallback;
     private  BackButtonPressHandler backButtonPressHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +44,17 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         setSupportActionBar(toolbar);
         recyclerView=findViewById(R.id.notes_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        /*
+
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
-        */
+
         FloatingActionButton fab=(FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //todo
                 onAddnoewnote();
             }
         });
@@ -124,7 +125,8 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
     }
 
     @Override
-    public void onNoteLongClick(final Note note) {
+    public void onNoteLongClick(Note note) {
+        /*
         new AlertDialog.Builder(this)
                 .setTitle("LINE PLUS 김준성")
                 .setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -150,6 +152,35 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
                     }
                 })
                 .create()
-                .show();;
+                .show();
+         */
+        note.setChecked(true);
+        adapter.setMultiCheck(true);
+        actioncallback=new callback() {
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                adapter.setListener(new NoteEventListener() {
+                    @Override
+                    public void onNoteClick(Note note) {
+                        note.setChecked(!note.isChecked());
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onNoteLongClick(Note note) {
+
+                    }
+                });
+                return false;
+            }
+        };
+        startActionMode(actioncallback);
+
+    }
+    @Override
+    public void onActionModeFinished(ActionMode mode){
+        super.onActionModeFinished(mode);
+        adapter.setMultiCheck(false);
+        adapter.setListener(this);
     }
 }

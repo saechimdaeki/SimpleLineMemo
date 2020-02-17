@@ -29,7 +29,7 @@ public class EditNoteActivity extends AppCompatActivity {
             int id = getIntent().getExtras().getInt(NOTE_EXTRA_KEY, 0);
             tmp = dao.getNoteById(id);
             inputNote.setText(tmp.getText());
-        } else inputNote.setFocusable(true);
+        }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,7 +55,8 @@ public class EditNoteActivity extends AppCompatActivity {
         String textbody=inputbody.getText().toString();
         if (!text.isEmpty()) {
             long date = new Date().getTime(); // get Courent  system time
-
+            //Note note = new Note(text, date); // Create new Note
+             //dao.insertNote(note); // insert and save note to database
             if(tmp==null)
             {
                 tmp=new Note(text,date);

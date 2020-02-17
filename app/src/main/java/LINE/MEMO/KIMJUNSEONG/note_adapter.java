@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.Placeholder;
@@ -15,6 +16,7 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
     public Context context;
     public ArrayList<Note> notelist;
     private NoteEventListener listener;
+    private boolean multiCheck=false;
     public note_adapter(Context context,ArrayList<Note> notelist){
         this.notelist=notelist;
         this.context=context;
@@ -46,7 +48,10 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
                     return false;
                 }
             });
-
+            if(multiCheck){
+                holder.checkBox.setVisibility(View.VISIBLE);
+                holder.checkBox.setChecked(note.isChecked());
+            }else holder.checkBox.setVisibility(View.GONE);
 
         }
     }
@@ -60,13 +65,19 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
     }
     class noteholder extends RecyclerView.ViewHolder{
         TextView notetext,notedate;
+        CheckBox checkBox;
         public noteholder(View itemView){
             super(itemView);
             notedate=itemView.findViewById(R.id.note_Date);
             notetext=itemView.findViewById(R.id.note);
+            checkBox=itemView.findViewById(R.id.checkbox);
         }
     }
     public void setListener(NoteEventListener listener){
         this.listener=listener;
+    }
+    public void setMultiCheck(boolean multiCheck){
+        this.multiCheck=multiCheck;
+        notifyDataSetChanged();
     }
 }
