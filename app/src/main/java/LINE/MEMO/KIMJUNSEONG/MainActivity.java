@@ -90,25 +90,19 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         if (notes.size() == 0) {
             this.recyclerView.setVisibility(View.GONE);
             findViewById(R.id.empty_notes_view).setVisibility(View.VISIBLE);
-
         } else {
             this.recyclerView.setVisibility(View.VISIBLE);
             findViewById(R.id.empty_notes_view).setVisibility(View.GONE);
         }
     }
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -118,14 +112,12 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
     public void onBackPressed(){
         backButtonPressHandler.onBackPressed();
     }
-
     @Override
     public void onNoteClick(Note note) {
         Intent intent=new Intent(this,EditNoteActivity.class);
         intent.putExtra(NOTE_EXTRA_KEY,note.getId());
         startActivity(intent);
     }
-
     @Override
     public void onNoteLongClick(final Note note) {
         new AlertDialog.Builder(this)
@@ -196,7 +188,6 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         actioncallback.setCount(chackedCount + "/" + notes.size());
     */
     }
-
     @Override
     public void onActionModeFinished(ActionMode mode){
         super.onActionModeFinished(mode);
@@ -211,19 +202,16 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
             for (Note note : chackedNotes) {
                 dao.deleteNote(note);
             }
-
             loadnote();
             Toast.makeText(this, chackedNotes.size() + "메모 삭제완료", Toast.LENGTH_SHORT).show();
-        } else Toast.makeText(this, "메모가 선택되지 않았네요 ", Toast.LENGTH_SHORT).show();
+        } else Toast.makeText(this, "메모가 선택되지 않았네요 ㅎㅎ ", Toast.LENGTH_SHORT).show();
     }
-
     private ItemTouchHelper swipeToDeleteHelper = new ItemTouchHelper(
             new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
                 @Override
                 public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                     return false;
                 }
-
                 @Override
                 public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
@@ -232,9 +220,7 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
                         Note swipedNote = notes.get(viewHolder.getAdapterPosition());
                         if (swipedNote != null) {
                             swipeToDelete(swipedNote, viewHolder);
-
                         }
-
                     }
                 }
             });
@@ -248,21 +234,15 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
                         notes.remove(swipedNote);
                         adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
                         showEmptyView();
-
                     }
                 })
                 .setNegativeButton("취소", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         recyclerView.getAdapter().notifyItemChanged(viewHolder.getAdapterPosition());
-
-
                     }
                 })
                 .setCancelable(false)
                 .create().show();
-
     }
-
-
 }

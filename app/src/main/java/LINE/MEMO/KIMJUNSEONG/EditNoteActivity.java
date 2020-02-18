@@ -6,6 +6,7 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,6 +30,7 @@ public class EditNoteActivity extends AppCompatActivity {
             int id = getIntent().getExtras().getInt(NOTE_EXTRA_KEY, 0);
             tmp = dao.getNoteById(id);
             inputNote.setText(tmp.getText());
+            inputbody.setText(tmp.getBody());
         }else inputNote.setFocusable(true);
     }
     @Override
@@ -41,7 +43,13 @@ public class EditNoteActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.save_note)
+        {
+            if(inputNote.getText()==null||inputNote.getText().toString().equals(""))
+                Toast.makeText(this, "제목을 입력해주세요~", Toast.LENGTH_SHORT).show();
+            else
             onSaveNote();
+        }
+
         else if (id==R.id.access_gallery)
         {
             startActivity(new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA));
@@ -59,11 +67,12 @@ public class EditNoteActivity extends AppCompatActivity {
              //dao.insertNote(note); // insert and save note to database
             if(tmp==null)
             {
-                tmp=new Note(text,date);
+                tmp=new Note(text,date,textbody);
                 dao.insertNote(tmp);
             }else{
                 tmp.setText(text);
                 tmp.setDate(date);
+                tmp.setBody(textbody);
                 dao.updateNote(tmp);
             }
            // Note note = new Note(text, date); // Create new Note

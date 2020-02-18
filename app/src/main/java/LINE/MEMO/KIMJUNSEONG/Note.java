@@ -21,9 +21,10 @@ public class Note {
 
 
     /* 수정할 내용임 (room은 생성자 여러개 못하므로) body를 추가할것.  */
-    public Note(String text,long date){
+    public Note(String text,long date, String body){
         this.text=text;
         this.date=date;
+        this.body=body;
 
     }
 

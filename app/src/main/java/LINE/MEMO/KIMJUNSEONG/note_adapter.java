@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.Placeholder;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -37,6 +36,7 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
         if(note!=null){
             holder.notetext.setText(note.getText());
             holder.notedate.setText(NoteDate.format(note.getDate()));
+            holder.notebody.setText(note.getBody());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -76,13 +76,14 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
     }
 
     class noteholder extends RecyclerView.ViewHolder{
-        TextView notetext,notedate;
+        TextView notetext,notedate,notebody;
         CheckBox checkBox;
         public noteholder(View itemView){
             super(itemView);
             notedate=itemView.findViewById(R.id.note_Date);
             notetext=itemView.findViewById(R.id.note);
             checkBox=itemView.findViewById(R.id.checkbox);
+            notebody=itemView.findViewById(R.id.note_body);
         }
     }
     public void setListener(NoteEventListener listener){
