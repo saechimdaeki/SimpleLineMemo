@@ -127,7 +127,36 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
     }
 
     @Override
-    public void onNoteLongClick(Note note) {
+    public void onNoteLongClick(final Note note) {
+        new AlertDialog.Builder(this)
+                .setTitle("LINE PLUS 김준성")
+                .setMessage("해당 메모를 삭제하거나 공유할 수 있습니다")
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dao.deleteNote(note);
+                        loadnote();
+                    }
+                })
+                .setNegativeButton("공유합니다", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent share=new Intent(Intent.ACTION_SEND);
+                        share.setType("text/plain");
+                        share.putExtra(Intent.EXTRA_TEXT,note.getText()+"\n"+"by 김준성");
+                        startActivity(share);
+                    }
+                })
+                .create()
+                .show();
+        // action callback 사용에있어 오류가 있어서 이전방식으로 대체합니다.... 2020 02 18 김준성
+        /*
         note.setChecked(true);
         chackedCount = 1;
         adapter.setMultiCheck(true);
@@ -136,11 +165,10 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
             public void onNoteClick(Note note) {
                 note.setChecked(!note.isChecked());
                 if (note.isChecked())
+                {
                     chackedCount++;
+                }
                 else chackedCount--;
-                if (chackedCount > 1) {
-                    actioncallback.changeShareItemVisible(false);
-                } else actioncallback.changeShareItemVisible(true);
 
                 if (chackedCount == 0) {
                     actioncallback.getAction().finish();
@@ -158,8 +186,6 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
             public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
                 if (menuItem.getItemId() == R.id.action_delete_notes)
                     onDeleteMultiNotes();
-                else if (menuItem.getItemId() == R.id.action_share_note)
-                    onSharedNote();
                 actionMode.finish();
                 return false;
             }
@@ -168,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         startActionMode(actioncallback);
         fab.setVisibility(View.GONE);
         actioncallback.setCount(chackedCount + "/" + notes.size());
+    */
     }
 
     @Override
@@ -178,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         adapter.setListener(this);
         fab.setVisibility(View.VISIBLE);
     }
-    private void onDeleteMultiNotes(){
+    private void onDeleteMultiNotes(){ ///action callback 사용안하므로 잠시 보류합니다.
         List<Note> chackedNotes = adapter.getCheckedNotes();
         if (chackedNotes.size() != 0) {
             for (Note note : chackedNotes) {
@@ -189,16 +216,7 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
             Toast.makeText(this, chackedNotes.size() + "메모 삭제완료", Toast.LENGTH_SHORT).show();
         } else Toast.makeText(this, "메모가 선택되지 않았네요 ", Toast.LENGTH_SHORT).show();
     }
-    private void onSharedNote(){
-        Note note = adapter.getCheckedNotes().get(0);
-        Intent share = new Intent(Intent.ACTION_SEND);
-        share.setType("text/plain");
-        String notetext = note.getText() + "\n\n this note Create time : " +
-                NoteDate.format(note.getDate()) + "\n  by :" +
-                getString(R.string.app_name);
-        share.putExtra(Intent.EXTRA_TEXT, notetext);
-        startActivity(share);
-    }
+
     private ItemTouchHelper swipeToDeleteHelper = new ItemTouchHelper(
             new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
                 @Override
@@ -210,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
                 public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
                     if (notes != null) {
-                        // get swiped note
+
                         Note swipedNote = notes.get(viewHolder.getAdapterPosition());
                         if (swipedNote != null) {
                             swipeToDelete(swipedNote, viewHolder);

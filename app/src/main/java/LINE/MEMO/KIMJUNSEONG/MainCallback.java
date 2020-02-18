@@ -6,14 +6,12 @@ import android.view.MenuItem;
 
 public abstract class MainCallback implements ActionMode.Callback {
     private ActionMode action;
-    private MenuItem countitem;
-    private MenuItem shareItem;
+    public MenuItem countitem;
     @Override
     public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
         actionMode.getMenuInflater().inflate(R.menu.menu_action_mode,menu);
         this.action=actionMode;
         this.countitem=menu.findItem(R.id.action_checked_count);
-        this.shareItem=menu.findItem(R.id.action_share_note);
         return true;
     }
 
@@ -31,9 +29,6 @@ public abstract class MainCallback implements ActionMode.Callback {
     public void setCount(String checkedCount){
         if(countitem!=null)
         this.countitem.setTitle(checkedCount);
-    }
-    public void changeShareItemVisible(boolean b) {
-        shareItem.setVisible(b);
     }
 
     public ActionMode getAction() {
