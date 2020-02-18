@@ -1,7 +1,9 @@
 package LINE.MEMO.KIMJUNSEONG;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -12,6 +14,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
     private MainCallback actioncallback;
     private int chackedCount = 0;
     private FloatingActionButton fab;
+    public  static Boolean permission =true;
+
     private  BackButtonPressHandler backButtonPressHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,12 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         if(savedInstanceState==null){
             Intent intent = new Intent(this,LoadingActivity.class);
             startActivity(intent);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED ){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE}, 5);
+            Toast.makeText(this, "권한을 허용해 주셔야 사진및 갤러리접근이 가능합니다 ", Toast.LENGTH_SHORT).show();
         }
         backButtonPressHandler=new BackButtonPressHandler(this);
         Toolbar toolbar=(Toolbar) findViewById(R.id.toolbar);
@@ -64,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         dao=NotesDB.getInstance(this).notesDao();
 
     }
+
+
+
     private void onAddnoewnote(){
 
         startActivity(new Intent(this, EditNoteActivity.class));
@@ -245,4 +260,26 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
                 .setCancelable(false)
                 .create().show();
     }
+    /* 안쓸라이브러리
+    private void tedPermission() {
+        final PermissionListener permissionListener=new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                permission= true;
+            }
+
+            @Override
+            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                permission=false;
+            }
+        };
+        TedPermission.with(this)
+                .setPermissionListener(permissionListener)
+                .setRationaleMessage("갤러리 접근 및 사진 촬영을위해 권한이 필요합니다")
+                .setDeniedMessage("권한을 허용해주세요")
+                .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA)
+                .check();
+    }
+
+     */
 }
