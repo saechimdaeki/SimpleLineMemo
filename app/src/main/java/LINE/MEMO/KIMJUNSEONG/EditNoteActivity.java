@@ -1,5 +1,6 @@
 package LINE.MEMO.KIMJUNSEONG;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -8,9 +9,12 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class EditNoteActivity extends AppCompatActivity {
     private EditText inputNote;
@@ -38,7 +42,6 @@ public class EditNoteActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.note_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -52,7 +55,9 @@ public class EditNoteActivity extends AppCompatActivity {
 
         else if (id==R.id.access_gallery)
         {
-            startActivity(new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA));
+            showdial();
+          //  startActivity(new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA));
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -62,9 +67,9 @@ public class EditNoteActivity extends AppCompatActivity {
         String text = inputNote.getText().toString();
         String textbody=inputbody.getText().toString();
         if (!text.isEmpty()) {
-            long date = new Date().getTime(); // get Courent  system time
-            //Note note = new Note(text, date); // Create new Note
-             //dao.insertNote(note); // insert and save note to database
+            long date = new Date().getTime();
+            //Note note = new Note(text, date);
+             //dao.insertNote(note);
             if(tmp==null)
             {
                 tmp=new Note(text,date,textbody);
@@ -75,14 +80,36 @@ public class EditNoteActivity extends AppCompatActivity {
                 tmp.setBody(textbody);
                 dao.updateNote(tmp);
             }
-           // Note note = new Note(text, date); // Create new Note
-          //  dao.insertNote(note); // insert and save note to database
-
-
-
-
-            finish(); // return to the MainActivity
+           // Note note = new Note(text, date);
+          //  dao.insertNote(note);
+            finish();
         }
 
+    }
+    void showdial()
+    {
+        final List<String> ListItems = new ArrayList<>();
+        ListItems.add("갤러리에서 가져오기");
+        ListItems.add("카메라로 촬영하기");
+        ListItems.add("URL로 가져오기");
+        final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("이미지를 추가하려고해요 방식을 알려주세요~");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int pos) {
+                if(pos==0)
+                {
+                    Intent intent = new Intent();
+                    intent.setAction(android.content.Intent.ACTION_VIEW);
+                    intent.setType("image/*");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+                else if(pos==1)
+                    startActivity(new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA));
+
+            }
+        });
+        builder.show();
     }
 }

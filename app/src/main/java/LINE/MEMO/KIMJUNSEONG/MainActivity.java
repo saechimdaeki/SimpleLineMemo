@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent share=new Intent(Intent.ACTION_SEND);
                         share.setType("text/plain");
-                        share.putExtra(Intent.EXTRA_TEXT,note.getText()+"\n"+"by 김준성");
+                        share.putExtra(Intent.EXTRA_TEXT,note.getText()+"\n"+ note.getBody()+"by 김준성");
                         startActivity(share);
                     }
                 })
