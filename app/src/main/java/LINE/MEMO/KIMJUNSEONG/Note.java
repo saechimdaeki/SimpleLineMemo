@@ -16,16 +16,19 @@ public class Note {
     @ColumnInfo(name = "body")
     private String body;
 
+    @ColumnInfo(name = "image", typeAffinity = ColumnInfo.BLOB)
+    private byte[] image;
 
     @Ignore
     private boolean checked = false;
 
 
     /* 수정완료 2020 02 18  김준성  */
-    public Note(String text, long date, String body) {
+    public Note(String text, long date, String body ) {
         this.text = text;
         this.date = date;
         this.body = body;
+
 
     }
 
@@ -64,6 +67,15 @@ public class Note {
     public boolean isChecked() {
         return checked;
     }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+
+    }
+
 
     public void setChecked(boolean b) {
         this.checked = checked;

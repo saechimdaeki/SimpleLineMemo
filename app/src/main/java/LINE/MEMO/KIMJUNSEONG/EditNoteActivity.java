@@ -52,11 +52,9 @@ public class EditNoteActivity extends AppCompatActivity {
     private static final int CAMERA=2;
     private static final int imgURL=3;
     private File file;
-    private int photoint;
-    private String photostring;
+    private Boolean thumbnail=false;
     ImageView imageView;
     GridView gridView;
-    String packName=this.getPackageName();
 
 
     @Override
@@ -79,15 +77,14 @@ public class EditNoteActivity extends AppCompatActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //photostring="test"+position;
                 imageView=(ImageView)view;
-
+                if(position==0)
+                {
+                   ;
+                }
                 showdial();
-
             }
         });
-
-
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -127,6 +124,12 @@ public class EditNoteActivity extends AppCompatActivity {
             }
            // Note note = new Note(text, date);
           //  dao.insertNote(note);
+            if(thumbnail)
+            {
+                ;
+
+            }
+
             finish();
         }
     }

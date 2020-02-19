@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +34,7 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
     @Override
     public void onBindViewHolder(noteholder holder, int position) {
         final Note note=getnotes(position);
+
         if(note!=null){
             holder.notetext.setText(note.getText());
             holder.notedate.setText(NoteDate.format(note.getDate()));
@@ -50,7 +52,13 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
                     return false;
                 }
             });
-            if(multiCheck){
+            if("cmp".equals(holder.thumbnail.getTag()))
+            {
+                holder.thumbnail.setVisibility(View.INVISIBLE);///첫번째 사진이 없을시 썸네일 보이지않음 .
+            }else
+                holder.thumbnail.setImageResource(R.drawable.test1); //있을시는 test1이 썸네일이 된다
+
+                if(multiCheck){
                 holder.checkBox.setVisibility(View.VISIBLE);
                 holder.checkBox.setChecked(note.isChecked());
             }else holder.checkBox.setVisibility(View.GONE);
@@ -77,6 +85,7 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
 
     class noteholder extends RecyclerView.ViewHolder{
         TextView notetext,notedate,notebody;
+        ImageView thumbnail;
         CheckBox checkBox;
         public noteholder(View itemView){
             super(itemView);
@@ -84,6 +93,9 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
             notetext=itemView.findViewById(R.id.note);
             checkBox=itemView.findViewById(R.id.checkbox);
             notebody=itemView.findViewById(R.id.note_body);
+            thumbnail=itemView.findViewById(R.id.thumbnail_note);
+
+
         }
     }
     public void setListener(NoteEventListener listener){

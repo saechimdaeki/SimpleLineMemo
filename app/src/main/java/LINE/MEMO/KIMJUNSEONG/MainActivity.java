@@ -31,11 +31,8 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
     private ArrayList<Note> notes;
     private note_adapter adapter;
     private NotesDao dao;
-    private MainCallback actioncallback;
-    private int chackedCount = 0;
     private FloatingActionButton fab;
     public  static Boolean permission =true;
-
     private  BackButtonPressHandler backButtonPressHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         this.adapter=new note_adapter(this,this.notes);
         this.adapter.setListener(this);
         this.recyclerView.setAdapter(adapter);
+
         showEmptyView();
         swipeToDeleteHelper.attachToRecyclerView(recyclerView);
     }
