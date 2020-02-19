@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,14 +15,22 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.exifinterface.media.ExifInterface;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,11 +52,18 @@ public class EditNoteActivity extends AppCompatActivity {
     private static final int CAMERA=2;
     private static final int imgURL=3;
     private File file;
-
+    private int photoint;
+    private String photostring;
+    ImageView imageView;
+    GridView gridView;
+    String packName=this.getPackageName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edite);
+        gridView=(GridView)findViewById(R.id.gridView01);
+        ImageAdapter imageAdapter=new ImageAdapter(this);
+        gridView.setAdapter(imageAdapter);
         inputNote = findViewById(R.id.input_note);
         inputbody = findViewById(R.id.input_note_body);
         dao = NotesDB.getInstance(this).notesDao();
@@ -58,6 +74,17 @@ public class EditNoteActivity extends AppCompatActivity {
             inputNote.setText(tmp.getText());
             inputbody.setText(tmp.getBody());
         }else inputNote.setFocusable(true);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //photostring="test"+position;
+                imageView=(ImageView)view;
+
+                showdial();
+            }
+        });
+
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -74,12 +101,9 @@ public class EditNoteActivity extends AppCompatActivity {
             else
             onSaveNote();
         }
-
         else if (id==R.id.access_gallery)
         {
             showdial();
-          //  startActivity(new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA));
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -106,12 +130,9 @@ public class EditNoteActivity extends AppCompatActivity {
           //  dao.insertNote(note);
             finish();
         }
-
     }
     void showdial()
     {
-
-
         final List<String> ListItems = new ArrayList<>();
         ListItems.add("갤러리에서 가져오기");
         ListItems.add("카메라로 촬영하기");
@@ -132,50 +153,69 @@ public class EditNoteActivity extends AppCompatActivity {
                 }
                 else if(pos==1)//사진
                 {
-                    //startActivity(new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA));
                     if(permission)
                     {
-                        //TAKEPHOTO();
                         sendTakePhotoIntent();
+                    }else{
+                        Toast.makeText(EditNoteActivity.this, "갤러리 접근 및 사진 촬영을위해 권한이 필요합니다", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else if (pos==2)// url
+                {
+                    if(permission)
+                    {
+                        inserturl();
                     }else{
                         Toast.makeText(EditNoteActivity.this, "권한을 허용해주세요", Toast.LENGTH_SHORT).show();
                     }
                 }
-
             }
         });
         builder.show();
     }
-
-    private void TAKEPHOTO() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        try {
-            file = createImageFile();
-        } catch (IOException e) {
-            Toast.makeText(this, "이미지 처리 오류! 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
-            finish();
-            e.printStackTrace();
-        }
-        if (file != null) {
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-
-                Uri photoUri = FileProvider.getUriForFile(this,
-                        "LINE.MEMO.KIMJUNSEONG.provider", file);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(intent, CAMERA);
-
-            } else {
-
-                Uri photoUri = Uri.fromFile(file);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(intent, CAMERA);
+    private void inserturl()  {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final EditText et=new EditText(getApplicationContext());
+        builder.setTitle("URL을 입력해주세요").setMessage("URL을 입력바랍니다").setView(et);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int id)
+            {
+                String abcd=et.getText().toString();
+                Glide.with(getApplicationContext())
+                        .asBitmap()
+                        .load(abcd)
+                        .into(new CustomTarget<Bitmap>(50,50) {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                imageView.setImageBitmap(resource);
+                                // ((ImageView)findViewById(R.id.imageView1)).setImageBitmap(resource);
+                               // ((ImageView)findViewById(R.id.imageView1)).setVisibility(View.VISIBLE);
+                            }
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                            }
+                        });
 
             }
-        }
-    }
+        });
+        AlertDialog alertDialog = builder.create();
 
+        alertDialog.show();
+
+        /*
+        if(findViewById(R.id.imageView1).getResources().equals(R.drawable.ic_add_black_24dp))
+        {
+            Toast.makeText(this, "존재하지 않는 URL입니다.", Toast.LENGTH_SHORT).show();
+        }
+
+         */
+        /*
+        URL imageurl = new URL("https://user-images.githubusercontent.com/40031858/74790980-90098280-52fc-11ea-9090-e927d209f0d1.png");
+        Bitmap bitmap = BitmapFactory.decodeStream(imageurl.openConnection().getInputStream());
+        ((ImageView)findViewById(R.id.imageView1)).setImageBitmap(bitmap);
+        */
+    }
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "LINEPLUS" + timeStamp + "_";
@@ -188,20 +228,16 @@ public class EditNoteActivity extends AppCompatActivity {
         imageFilePath = image.getAbsolutePath();
         return image;
     }
-
     private void ALBUM() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
         startActivityForResult(intent, gallery);
     }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != Activity.RESULT_OK) {
             Toast.makeText(this, "취소 되었습니다.", Toast.LENGTH_SHORT).show();
-
             if(file != null) {
                 if (file.exists()) {
                     if (file.delete()) {
@@ -209,10 +245,8 @@ public class EditNoteActivity extends AppCompatActivity {
                     }
                 }
             }
-
             return;
         }
-
         if (requestCode == gallery) {
             Uri photoUri = data.getData();
             Cursor cursor = null;
@@ -224,16 +258,12 @@ public class EditNoteActivity extends AppCompatActivity {
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                 cursor.moveToFirst();
                 file = new File(cursor.getString(column_index));
-
-
             } finally {
                 if (cursor != null) {
                     cursor.close();
                 }
             }
-
             setImage();
-
         } else if (requestCode == CAMERA) {
             Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
             ExifInterface exif = null;
@@ -250,28 +280,19 @@ public class EditNoteActivity extends AppCompatActivity {
             } else {
                 exifDegree = 0;
             }
-            if(findViewById(R.id.imageView1).getVisibility()==View.VISIBLE)
-            {
-                ((ImageView)findViewById(R.id.imageView2)).setImageBitmap(rotate(bitmap, exifDegree));
-                findViewById(R.id.imageView2).setVisibility(View.VISIBLE);
-            }else{
-                ((ImageView)findViewById(R.id.imageView1)).setImageBitmap(rotate(bitmap, exifDegree));
-                findViewById(R.id.imageView1).setVisibility(View.VISIBLE);
-            }
+
+              imageView.setImageBitmap(rotate(bitmap, exifDegree));
 
 
             //setImage();
-
         }
     }
     private void setImage() {
-        ImageView imageView = findViewById(R.id.imageView1);
         BitmapFactory.Options options = new BitmapFactory.Options();
         Bitmap originalBm = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
         imageView.setImageBitmap(originalBm);
         imageView.setVisibility(View.VISIBLE);
         file = null;
-
     }
     private void sendTakePhotoIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -280,12 +301,11 @@ public class EditNoteActivity extends AppCompatActivity {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                Toast.makeText(this, "파일생성실패 kjs", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "파일 생성에 실패하였습니다 kjs", Toast.LENGTH_SHORT).show();
             }
 
             if (photoFile != null) {
                 photoUri = FileProvider.getUriForFile(this, getPackageName(), photoFile);
-
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 startActivityForResult(takePictureIntent,  CAMERA);
             }

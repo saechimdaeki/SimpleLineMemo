@@ -28,6 +28,8 @@
         <activity android:name=".LoadingActivity"/>
         <activity android:name=".EditNoteActivity"
             android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustPan"
+
             />
         <!--FileUriExposedException 처리  -->
         <provider

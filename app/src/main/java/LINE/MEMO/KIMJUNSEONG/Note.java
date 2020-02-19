@@ -16,6 +16,8 @@ public class Note {
     @ColumnInfo(name="body")
     private String body;
 
+
+
     @Ignore
     private  boolean checked= false;
 
