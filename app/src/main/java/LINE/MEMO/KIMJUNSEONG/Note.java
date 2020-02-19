@@ -24,7 +24,7 @@ public class Note {
 
 
     /* 수정완료 2020 02 18  김준성  */
-    public Note(String text, long date, String body ) {
+    public Note(String text, long date, String body) {
         this.text = text;
         this.date = date;
         this.body = body;
@@ -36,16 +36,16 @@ public class Note {
         return text;
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }
+
     public String getBody() {
         return body;
     }
 
     public void setBody(String body) {
         this.body = body;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     public long getDate() {
@@ -68,16 +68,15 @@ public class Note {
         return checked;
     }
 
+    public void setChecked(boolean b) {
+        this.checked = checked;
+    }
+
     public byte[] getImage() {
         return image;
     }
 
     public void setImage(byte[] image) {
 
-    }
-
-
-    public void setChecked(boolean b) {
-        this.checked = checked;
     }
 }

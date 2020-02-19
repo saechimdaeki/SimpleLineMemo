@@ -5,13 +5,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public abstract class MainCallback implements ActionMode.Callback {
-    private ActionMode action;
     public MenuItem countitem;
+    private ActionMode action;
+
     @Override
     public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-        actionMode.getMenuInflater().inflate(R.menu.menu_action_mode,menu);
-        this.action=actionMode;
-        this.countitem=menu.findItem(R.id.action_checked_count);
+        actionMode.getMenuInflater().inflate(R.menu.menu_action_mode, menu);
+        this.action = actionMode;
+        this.countitem = menu.findItem(R.id.action_checked_count);
         return true;
     }
 
@@ -21,14 +22,14 @@ public abstract class MainCallback implements ActionMode.Callback {
     }
 
 
-
     @Override
     public void onDestroyActionMode(ActionMode actionMode) {
 
     }
-    public void setCount(String checkedCount){
-        if(countitem!=null)
-        this.countitem.setTitle(checkedCount);
+
+    public void setCount(String checkedCount) {
+        if (countitem != null)
+            this.countitem.setTitle(checkedCount);
     }
 
     public ActionMode getAction() {

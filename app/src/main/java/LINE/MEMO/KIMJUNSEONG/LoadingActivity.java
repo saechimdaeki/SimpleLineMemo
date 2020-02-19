@@ -12,10 +12,11 @@ public class LoadingActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
-        ImageView imageView=findViewById(R.id.image_loading);
+        ImageView imageView = findViewById(R.id.image_loading);
         Glide.with(getBaseContext()).load(R.raw.tenor).into(imageView);
         startLoading();
     }
+
     private void startLoading() {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {

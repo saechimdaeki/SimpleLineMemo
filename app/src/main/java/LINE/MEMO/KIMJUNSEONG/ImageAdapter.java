@@ -10,7 +10,7 @@ import android.widget.ImageView;
 public class ImageAdapter extends BaseAdapter {
     Context context;
 
-    private Integer[] mThumblds ={R.drawable.test1, R.drawable.test2, R.drawable.test3,
+    private Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,
             R.drawable.test4, R.drawable.test5, R.drawable.test5,
             R.drawable.test6, R.drawable.test7, R.drawable.test8,
             R.drawable.test9, R.drawable.test10, R.drawable.test11,
@@ -18,7 +18,7 @@ public class ImageAdapter extends BaseAdapter {
 
     };
 
-    public ImageAdapter(Context context){
+    public ImageAdapter(Context context) {
         this.context = context;
     }
 
@@ -40,15 +40,14 @@ public class ImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView;
-        if(convertView == null){
+        if (convertView == null) {
             imageView = new ImageView(context);
-            imageView.setLayoutParams(new GridView.LayoutParams(200,200));
+            imageView.setLayoutParams(new GridView.LayoutParams(200, 200));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        }else{
+        } else {
             imageView = (ImageView) convertView;
         }
         imageView.setImageResource(mThumblds[position]);
-
 
 
         return imageView;
