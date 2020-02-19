@@ -48,6 +48,9 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
         imageView.setImageResource(mThumblds[position]);
+
+
+
         return imageView;
     }
 }

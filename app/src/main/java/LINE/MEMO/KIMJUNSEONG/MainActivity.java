@@ -26,9 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static LINE.MEMO.KIMJUNSEONG.EditNoteActivity.NOTE_EXTRA_KEY;
-
-//import android.widget.Toolbar;
-
 public class MainActivity extends AppCompatActivity implements NoteEventListener{
     private RecyclerView recyclerView;
     private ArrayList<Note> notes;
@@ -75,23 +72,18 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         });
         dao=NotesDB.getInstance(this).notesDao();
 
+
+
     }
-
-
-
     private void onAddnoewnote(){
-
         startActivity(new Intent(this, EditNoteActivity.class));
     }
     private void loadnote(){
         this.notes=new ArrayList<>();
-
         List<Note> list=dao.getNotes();
         this.notes.addAll(list);
-
         this.adapter=new note_adapter(this,this.notes);
         this.adapter.setListener(this);
-
         this.recyclerView.setAdapter(adapter);
         showEmptyView();
         swipeToDeleteHelper.attachToRecyclerView(recyclerView);
