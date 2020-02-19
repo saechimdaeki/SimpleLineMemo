@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -55,7 +56,7 @@ public class EditNoteActivity extends AppCompatActivity {
     private Uri photoUri;
     private File file;
     private Boolean thumbnail = false;
-
+    Bitmap bitmap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +82,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 imageView = (ImageView) view;
                 if (position == 0) {
                     thumbnail = true;
+
                 }
                 showdial();
             }
@@ -125,11 +127,9 @@ public class EditNoteActivity extends AppCompatActivity {
             // Note note = new Note(text, date);
             //  dao.insertNote(note);
             if (thumbnail) {
-                Intent intent = new Intent(EditNoteActivity.this, note_adapter.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt("image", R.drawable.ic_check_black_24dp);
-                intent.putExtras(bundle);
-                startActivity(intent);
+                BitmapDrawable bitbit=(BitmapDrawable) imageView.getDrawable();
+                bitmap=bitbit.getBitmap();          ////Todo  :     이걸 넘겨야 혀
+
 
             }
 
