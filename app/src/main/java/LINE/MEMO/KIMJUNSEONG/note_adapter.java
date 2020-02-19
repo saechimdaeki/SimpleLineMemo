@@ -1,6 +1,10 @@
 package LINE.MEMO.KIMJUNSEONG;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,10 +57,38 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
                 }
             });
             if ("cmp".equals(holder.thumbnail.getTag())) {
+                /*
                 holder.thumbnail.setVisibility(View.INVISIBLE);///첫번째 사진이 없을시 썸네일 보이지않음 .
+                holder.thumbnail.setTag("cmpppp");
+                Bundle extras=((Activity) context).getIntent().getExtras();
+
+                int imageRes= 0;
+                if (extras != null) {
+                    imageRes = extras.getInt("IMAGE_RES");
+                    Log.v("되고있긴하냐 ", "어?"+imageRes);
+                }else{
+                    Log.v("안대네 ", "어어?"+imageRes);
+                }
+                holder.thumbnail.setImageResource(imageRes);
+                holder.thumbnail.setVisibility(View.VISIBLE);
+
+                 */
             } else {
+                //Intent intent=((Activity) context).getIntent();//   어댑터에서 getintent
+                /*
+                holder.thumbnail.setTag("cmpppp");
+                Bundle extras=((Activity) context).getIntent().getExtras();
+
+                int imageRes= 0;
+                if (extras != null) {
+                    imageRes = extras.getInt("IMAGE_RES");
+                }
+                holder.thumbnail.setImageResource(imageRes);
+                holder.thumbnail.setVisibility(View.VISIBLE);
+
+                 */
+                ;
             }
-            //holder.thumbnail.setImageResource(R.drawable.test1); //있을시는 test1이 썸네일이 된다
 
             if (multiCheck) {
                 holder.checkBox.setVisibility(View.VISIBLE);

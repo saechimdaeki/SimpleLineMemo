@@ -7,7 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-public class ImageAdapter extends BaseAdapter {
+public class ImageAdapter extends BaseAdapter { ///더이상 사용하지않습니다
     Context context;
 
     private Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,

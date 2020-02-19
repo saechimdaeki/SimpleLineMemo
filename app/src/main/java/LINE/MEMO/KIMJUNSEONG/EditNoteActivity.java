@@ -1,6 +1,7 @@
 package LINE.MEMO.KIMJUNSEONG;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,7 +17,9 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -46,6 +49,7 @@ public class EditNoteActivity extends AppCompatActivity {
     private static final int CAMERA = 2;
     private static final int imgURL = 3;
     ImageView imageView;
+    ImageView imagethumbnail;
     GridView gridView;
     private EditText inputNote;
     private NotesDao dao;
@@ -56,14 +60,21 @@ public class EditNoteActivity extends AppCompatActivity {
     private Uri photoUri;
     private File file;
     private Boolean thumbnail = false;
+    int imageRes;
     Bitmap bitmap;
+    public Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,
+            R.drawable.test4, R.drawable.test5, R.drawable.test5,
+            R.drawable.test6, R.drawable.test7, R.drawable.test8,
+            R.drawable.test9, R.drawable.test10, R.drawable.test11,
+            R.drawable.test12, R.drawable.test13, R.drawable.test14,
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edite);
         gridView = findViewById(R.id.gridView01);
-        ImageAdapter imageAdapter = new ImageAdapter(this);
-        gridView.setAdapter(imageAdapter);
+        //ImageAdapter imageAdapter = new ImageAdapter(this);
+        gridView.setAdapter(new ImageAdapterGridView(this));
         inputNote = findViewById(R.id.input_note);
         inputbody = findViewById(R.id.input_note_body);
         dao = NotesDB.getInstance(this).notesDao();
@@ -81,7 +92,10 @@ public class EditNoteActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 imageView = (ImageView) view;
                 if (position == 0) {
-                    thumbnail = true;
+                   imageRes = mThumblds[0];
+                    thumbnail=true;
+
+
 
                 }
                 showdial();
@@ -127,8 +141,11 @@ public class EditNoteActivity extends AppCompatActivity {
             // Note note = new Note(text, date);
             //  dao.insertNote(note);
             if (thumbnail) {
-                BitmapDrawable bitbit=(BitmapDrawable) imageView.getDrawable();
-                bitmap=bitbit.getBitmap();          ////Todo  :     이걸 넘겨야 혀
+                ////Todo  :     이걸 넘겨야 혀
+                Intent intent = new Intent(EditNoteActivity.this,note_adapter.class);
+                intent.putExtra("IMAGE_RES", imageRes);
+//                BitmapDrawable bitbit=(BitmapDrawable) imagethumbnail.getDrawable();
+//                bitmap=bitbit.getBitmap();
 
 
             }
@@ -216,6 +233,7 @@ public class EditNoteActivity extends AppCompatActivity {
         Bitmap bitmap = BitmapFactory.decodeStream(imageurl.openConnection().getInputStream());
         ((ImageView)findViewById(R.id.imageView1)).setImageBitmap(bitmap);
         */
+        //startActivityForResult(, gallery);
     }
 
     private File createImageFile() throws IOException {
@@ -290,6 +308,8 @@ public class EditNoteActivity extends AppCompatActivity {
 
             //setImage();
         }
+        /* url 은 처리안해도됨  */
+        //else if(requestCode==)
     }
 
     private void setImage() {
@@ -333,5 +353,39 @@ public class EditNoteActivity extends AppCompatActivity {
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+    public class ImageAdapterGridView extends BaseAdapter {
+        private Context mContext;
+
+        public ImageAdapterGridView(Context c) {
+            mContext = c;
+        }
+
+        public int getCount() {
+            return mThumblds.length;
+        }
+
+        public Object getItem(int position) {
+            return null;
+        }
+
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ImageView mImageView;
+
+            if (convertView == null) {
+                mImageView = new ImageView(mContext);
+                mImageView.setLayoutParams(new GridView.LayoutParams(200, 200));
+                mImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                mImageView.setPadding(16, 16, 16, 16);
+            } else {
+                mImageView = (ImageView) convertView;
+            }
+            mImageView.setImageResource(mThumblds[position]);
+            return mImageView;
+        }
     }
 }
