@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/access_gallery"
-        android:icon="@drawable/ic_attach"
-        android:title="갤러리"
-        app:showAsAction="ifRoom"
-        />
+
     <item
         android:id="@+id/save_note"
         android:title="저장"

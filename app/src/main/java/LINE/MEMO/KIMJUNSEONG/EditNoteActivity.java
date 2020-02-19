@@ -101,10 +101,13 @@ public class EditNoteActivity extends AppCompatActivity {
             else
             onSaveNote();
         }
+        /* 아래로 내렷습니다 더이상 메뉴에 이미지파일을 기능을 추가하지 않습니다
         else if (id==R.id.access_gallery)
         {
             showdial();
         }
+
+         */
         return super.onOptionsItemSelected(item);
     }
 

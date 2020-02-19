@@ -31,7 +31,7 @@
             android:windowSoftInputMode="adjustPan"
 
             />
-        <!--FileUriExposedException 처리  -->
+        <!--FileUriExposedException 처리 이건 당연한거임 android7이상에서  2020 02 18 김준성 -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="LINE.MEMO.KIMJUNSEONG"
