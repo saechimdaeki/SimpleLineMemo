@@ -70,6 +70,8 @@ public class EditNoteActivity extends AppCompatActivity {
 
         if (getIntent().getExtras() != null) {
             int id = getIntent().getExtras().getInt(NOTE_EXTRA_KEY, 0);
+            int photo=getIntent().getExtras().getInt(NOTE_EXTRA_KEY,0);
+            tmp=dao.getNoteById(photo);
             tmp = dao.getNoteById(id);
             inputNote.setText(tmp.getText());
             inputbody.setText(tmp.getBody());
@@ -80,7 +82,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 imageView=(ImageView)view;
                 if(position==0)
                 {
-                   ;
+                   thumbnail=true;
                 }
                 showdial();
             }
@@ -126,7 +128,11 @@ public class EditNoteActivity extends AppCompatActivity {
           //  dao.insertNote(note);
             if(thumbnail)
             {
-                ;
+                Intent intent=new Intent(EditNoteActivity.this, note_adapter.class);
+                Bundle bundle=new Bundle();
+                bundle.putInt("image",R.drawable.ic_check_black_24dp);
+                intent.putExtras(bundle);
+                startActivity(intent);
 
             }
 

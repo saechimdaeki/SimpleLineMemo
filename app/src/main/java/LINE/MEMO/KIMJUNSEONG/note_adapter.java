@@ -56,7 +56,10 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
             {
                 holder.thumbnail.setVisibility(View.INVISIBLE);///첫번째 사진이 없을시 썸네일 보이지않음 .
             }else
-                holder.thumbnail.setImageResource(R.drawable.test1); //있을시는 test1이 썸네일이 된다
+            {
+                ;
+            }
+                //holder.thumbnail.setImageResource(R.drawable.test1); //있을시는 test1이 썸네일이 된다
 
                 if(multiCheck){
                 holder.checkBox.setVisibility(View.VISIBLE);
@@ -74,7 +77,7 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
         return notelist.get(i);
     }
 
-    public List<Note> getCheckedNotes() {
+    public List<Note> getCheckedNotes() {   //// 더이상 사용하지 않습니다
          List<Note> chckedNotes=new ArrayList<>();
         for (Note n: this.notelist){
             if(n.isChecked())
@@ -101,7 +104,7 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
     public void setListener(NoteEventListener listener){
         this.listener=listener;
     }
-    public void setMultiCheck(boolean multiCheck){
+    public void setMultiCheck(boolean multiCheck){ ///더이상 사용하지 않습니다
         this.multiCheck=multiCheck;
         if(!multiCheck)
             for(Note note:this.notelist){
