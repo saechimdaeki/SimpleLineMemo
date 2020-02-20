@@ -181,67 +181,18 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
                 })
                 .create()
                 .show();
-        // action callback 사용에있어 오류가 있어서 이전방식으로 대체합니다.... 2020 02 18 김준성
-        /*
-        note.setChecked(true);
-        chackedCount = 1;
-        adapter.setMultiCheck(true);
-        adapter.setListener(new NoteEventListener() {
-            @Override
-            public void onNoteClick(Note note) {
-                note.setChecked(!note.isChecked());
-                if (note.isChecked())
-                {
-                    chackedCount++;
-                }
-                else chackedCount--;
-
-                if (chackedCount == 0) {
-                    actioncallback.getAction().finish();
-                }
-                actioncallback.setCount(chackedCount + "/" + notes.size());
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onNoteLongClick(Note note) {
-            }
-        });
-        actioncallback = new MainCallback() {
-            @Override
-            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.action_delete_notes)
-                    onDeleteMultiNotes();
-                actionMode.finish();
-                return false;
-            }
-
-        };
-        startActionMode(actioncallback);
-        fab.setVisibility(View.GONE);
-        actioncallback.setCount(chackedCount + "/" + notes.size());
-    */
+        
     }
 
     @Override
     public void onActionModeFinished(ActionMode mode) {
         super.onActionModeFinished(mode);
 
-        adapter.setMultiCheck(false);
         adapter.setListener(this);
         fab.setVisibility(View.VISIBLE);
     }
 
-    private void onDeleteMultiNotes() { ///action callback 사용안하므로 잠시 보류합니다.
-        List<Note> chackedNotes = adapter.getCheckedNotes();
-        if (chackedNotes.size() != 0) {
-            for (Note note : chackedNotes) {
-                dao.deleteNote(note);
-            }
-            loadnote();
-            Toast.makeText(this, chackedNotes.size() + "메모 삭제완료", Toast.LENGTH_SHORT).show();
-        } else Toast.makeText(this, "메모가 선택되지 않았네요 ㅎㅎ ", Toast.LENGTH_SHORT).show();
-    }
+
 
     private void swipeToDelete(final Note swipedNote, final RecyclerView.ViewHolder viewHolder) {
         new AlertDialog.Builder(MainActivity.this)

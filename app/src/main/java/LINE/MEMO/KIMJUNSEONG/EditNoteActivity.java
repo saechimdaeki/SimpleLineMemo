@@ -7,13 +7,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +33,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.exifinterface.media.ExifInterface;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -49,7 +52,7 @@ public class EditNoteActivity extends AppCompatActivity {
     private static final int CAMERA = 2;
     private static final int imgURL = 3;
     ImageView imageView;
-    ImageView imagethumbnail;
+    public static boolean abcd=false;
     GridView gridView;
     private EditText inputNote;
     private NotesDao dao;
@@ -59,9 +62,10 @@ public class EditNoteActivity extends AppCompatActivity {
     private String imageFilePath;
     private Uri photoUri;
     private File file;
-    private Boolean thumbnail = false;
-    int imageRes;
+    byte[]image;    ///바이트
+    ImageView imgthumb;
     Bitmap bitmap;
+    Drawable d;
     public Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,
             R.drawable.test4, R.drawable.test5, R.drawable.test5,
             R.drawable.test6, R.drawable.test7, R.drawable.test8,
@@ -73,16 +77,13 @@ public class EditNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edite);
         gridView = findViewById(R.id.gridView01);
-        //ImageAdapter imageAdapter = new ImageAdapter(this);
         gridView.setAdapter(new ImageAdapterGridView(this));
         inputNote = findViewById(R.id.input_note);
         inputbody = findViewById(R.id.input_note_body);
+        abcd=false;
         dao = NotesDB.getInstance(this).notesDao();
-
         if (getIntent().getExtras() != null) {
             int id = getIntent().getExtras().getInt(NOTE_EXTRA_KEY, 0);
-            int photo = getIntent().getExtras().getInt(NOTE_EXTRA_KEY, 0);
-            tmp = dao.getNoteById(photo);
             tmp = dao.getNoteById(id);
             inputNote.setText(tmp.getText());
             inputbody.setText(tmp.getBody());
@@ -91,12 +92,12 @@ public class EditNoteActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 imageView = (ImageView) view;
-                if (position == 0) {
-                   imageRes = mThumblds[0];
-                    thumbnail=true;
-
-
-
+                if(position==0)
+                {
+                    abcd=true;
+                    imgthumb=(ImageView)view;
+                    d=imgthumb.getDrawable();
+                    bitmap=getBitmap((VectorDrawable) d);
                 }
                 showdial();
             }
@@ -125,31 +126,29 @@ public class EditNoteActivity extends AppCompatActivity {
 
         String text = inputNote.getText().toString();
         String textbody = inputbody.getText().toString();
+        if(abcd)
+        image=BitmapManager.bitmapToByte(bitmap);
+        else
+        {
+            Drawable drawable=getResources().getDrawable(R.drawable.ic_ac_unit_black_24dp);
+            bitmap=getBitmap((VectorDrawable) drawable);
+            image=BitmapManager.bitmapToByte(bitmap);
+        }
+
         if (!text.isEmpty()) {
             long date = new Date().getTime();
-            //Note note = new Note(text, date);
-            //dao.insertNote(note);
             if (tmp == null) {
-                tmp = new Note(text, date, textbody);
+                tmp = new Note(text, date, textbody,image);
+                Log.v("에디트노트","잘갔는가?"+image);
                 dao.insertNote(tmp);
             } else {
                 tmp.setText(text);
                 tmp.setDate(date);
                 tmp.setBody(textbody);
+                tmp.setImage(image);
+                Log.v("에디트노트2","잘갔는가?2"+image);
                 dao.updateNote(tmp);
             }
-            // Note note = new Note(text, date);
-            //  dao.insertNote(note);
-            if (thumbnail) {
-                ////Todo  :     이걸 넘겨야 혀
-                Intent intent = new Intent(EditNoteActivity.this,note_adapter.class);
-                intent.putExtra("IMAGE_RES", imageRes);
-//                BitmapDrawable bitbit=(BitmapDrawable) imagethumbnail.getDrawable();
-//                bitmap=bitbit.getBitmap();
-
-
-            }
-
             finish();
         }
     }
@@ -206,10 +205,7 @@ public class EditNoteActivity extends AppCompatActivity {
                             @Override
                             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                                 imageView.setImageBitmap(resource);
-                                // ((ImageView)findViewById(R.id.imageView1)).setImageBitmap(resource);
-                                // ((ImageView)findViewById(R.id.imageView1)).setVisibility(View.VISIBLE);
                             }
-
                             @Override
                             public void onLoadCleared(@Nullable Drawable placeholder) {
                             }
@@ -218,22 +214,7 @@ public class EditNoteActivity extends AppCompatActivity {
             }
         });
         AlertDialog alertDialog = builder.create();
-
         alertDialog.show();
-
-        /*
-        if(findViewById(R.id.imageView1).getResources().equals(R.drawable.ic_add_black_24dp))
-        {
-            Toast.makeText(this, "존재하지 않는 URL입니다.", Toast.LENGTH_SHORT).show();
-        }
-
-         */
-        /*
-        URL imageurl = new URL("https://user-images.githubusercontent.com/40031858/74790980-90098280-52fc-11ea-9090-e927d209f0d1.png");
-        Bitmap bitmap = BitmapFactory.decodeStream(imageurl.openConnection().getInputStream());
-        ((ImageView)findViewById(R.id.imageView1)).setImageBitmap(bitmap);
-        */
-        //startActivityForResult(, gallery);
     }
 
     private File createImageFile() throws IOException {
@@ -302,16 +283,9 @@ public class EditNoteActivity extends AppCompatActivity {
             } else {
                 exifDegree = 0;
             }
-
             imageView.setImageBitmap(rotate(bitmap, exifDegree));
-
-
-            //setImage();
         }
-        /* url 은 처리안해도됨  */
-        //else if(requestCode==)
     }
-
     private void setImage() {
         BitmapFactory.Options options = new BitmapFactory.Options();
         Bitmap originalBm = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
@@ -388,4 +362,34 @@ public class EditNoteActivity extends AppCompatActivity {
             return mImageView;
         }
     }
+
+
+    @Override   /////상태저장
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+    }
+    private static Bitmap getBitmap(VectorDrawableCompat vectorDrawable) {
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return bitmap;
+    }
+    private static Bitmap getBitmap(VectorDrawable vectorDrawable) {
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return bitmap;
+    }
+
+
 }
