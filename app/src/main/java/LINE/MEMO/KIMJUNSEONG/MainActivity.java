@@ -41,12 +41,9 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
                 public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                     return false;
                 }
-
                 @Override
                 public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
                     if (notes != null) {
-
                         Note swipedNote = notes.get(viewHolder.getAdapterPosition());
                         if (swipedNote != null) {
                             swipeToDelete(swipedNote, viewHolder);
@@ -81,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         recyclerView.setLayoutManager(linearLayoutManager);
 
         fab = findViewById(R.id.fab);
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,11 +88,9 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
 
 
     }
-
     private void onAddnoewnote() {
         startActivity(new Intent(this, EditNoteActivity.class));
     }
-
     private void loadnote() {
         this.notes = new ArrayList<>();
         List<Note> list = dao.getNotes();
@@ -181,9 +175,8 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
                 })
                 .create()
                 .show();
-        
-    }
 
+    }
     @Override
     public void onActionModeFinished(ActionMode mode) {
         super.onActionModeFinished(mode);
@@ -191,9 +184,6 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
         adapter.setListener(this);
         fab.setVisibility(View.VISIBLE);
     }
-
-
-
     private void swipeToDelete(final Note swipedNote, final RecyclerView.ViewHolder viewHolder) {
         new AlertDialog.Builder(MainActivity.this)
                 .setMessage("지울까요?")
@@ -215,26 +205,11 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
                 .setCancelable(false)
                 .create().show();
     }
-    /* 안쓸라이브러리
-    private void tedPermission() {
-        final PermissionListener permissionListener=new PermissionListener() {
-            @Override
-            public void onPermissionGranted() {
-                permission= true;
-            }
-
-            @Override
-            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-                permission=false;
-            }
-        };
-        TedPermission.with(this)
-                .setPermissionListener(permissionListener)
-                .setRationaleMessage("갤러리 접근 및 사진 촬영을위해 권한이 필요합니다")
-                .setDeniedMessage("권한을 허용해주세요")
-                .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA)
-                .check();
+    @Override
+    public void onStart(){
+        super.onStart();
+        dao = NotesDB.getInstance(this).notesDao();
+        loadnote();
     }
 
-     */
 }

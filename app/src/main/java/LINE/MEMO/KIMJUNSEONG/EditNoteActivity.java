@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,6 +65,8 @@ public class EditNoteActivity extends AppCompatActivity {
     ImageView imgthumb;
     Bitmap bitmap;
     Drawable d;
+
+    //TODO : 이미지가 변경되고 유지되게끔 해야함 
     public Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,
             R.drawable.test4, R.drawable.test5, R.drawable.test5,
             R.drawable.test6, R.drawable.test7, R.drawable.test8,
@@ -100,6 +101,7 @@ public class EditNoteActivity extends AppCompatActivity {
                     bitmap=getBitmap((VectorDrawable) d);
                 }
                 showdial();
+
             }
         });
     }
@@ -127,11 +129,15 @@ public class EditNoteActivity extends AppCompatActivity {
         String text = inputNote.getText().toString();
         String textbody = inputbody.getText().toString();
         if(abcd)
-        image=BitmapManager.bitmapToByte(bitmap);
+        {
+            image=BitmapManager.bitmapToByte(bitmap);
+        }
         else
         {
-            Drawable drawable=getResources().getDrawable(R.drawable.ic_ac_unit_black_24dp);
+            Drawable drawable=getResources().getDrawable(R.drawable.ic_check_box_outline_blank_black_24dp);
             bitmap=getBitmap((VectorDrawable) drawable);
+
+
             image=BitmapManager.bitmapToByte(bitmap);
         }
 
@@ -139,14 +145,14 @@ public class EditNoteActivity extends AppCompatActivity {
             long date = new Date().getTime();
             if (tmp == null) {
                 tmp = new Note(text, date, textbody,image);
-                Log.v("에디트노트","잘갔는가?"+image);
+           //     Log.v("에디트노트","잘갔는가?"+image);
                 dao.insertNote(tmp);
             } else {
                 tmp.setText(text);
                 tmp.setDate(date);
                 tmp.setBody(textbody);
                 tmp.setImage(image);
-                Log.v("에디트노트2","잘갔는가?2"+image);
+             //   Log.v("에디트노트2","잘갔는가?2"+image);
                 dao.updateNote(tmp);
             }
             finish();

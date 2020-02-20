@@ -19,19 +19,18 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
     public Context context;
     public ArrayList<Note> notelist;
     private NoteEventListener listener;
+    boolean check=EditNoteActivity.abcd;
 
     public note_adapter(Context context, ArrayList<Note> notelist) {
         this.notelist = notelist;
         this.context = context;
     }
-
     @Override
     public noteholder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.note, parent, false);
-
+        check=true;
         return new noteholder(view);
     }
-
     @Override
     public void onBindViewHolder(noteholder holder, int position) {
         final Note note = getnotes(position);
@@ -44,12 +43,8 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
                 @Override
                 public void onClick(View view) {
                     listener.onNoteClick(note);
-
                 }
             });
-
-
-
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
@@ -57,17 +52,16 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
                     return false;
                 }
             });
-            if(EditNoteActivity.abcd)
+            if(check)
             {
                 Bitmap bitmap= byteToBitmap(note.getImage());
                 Log.v("bitmap","잘받긴햇니?"+byteToBitmap(note.getImage()));
                 holder.thumbnail.setImageBitmap(bitmap);
+                holder.thumbnail.setVisibility(View.VISIBLE);
                // holder.thumbnail.setImageBitmap(BitmapManager.base64ToBitmap(note.getPhoto()));
-
             }
         }
     }
-
     @Override
     public int getItemCount() {
         return notelist.size();
