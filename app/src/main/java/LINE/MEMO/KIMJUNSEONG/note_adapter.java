@@ -2,7 +2,6 @@ package LINE.MEMO.KIMJUNSEONG;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,9 +37,9 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
         if (note != null) {
             holder.notetext.setText(note.getText());
             holder.notedate.setText(NoteDate.format(note.getDate()));
-            if(note.getBody().length()>=100)
+            if(note.getBody().length()>=80)
             {
-                for(int i=0; i<100; i++)
+                for(int i=0; i<80; i++)
                 {
                     tmp+=note.getBody().charAt(i);
                 }
@@ -65,7 +64,7 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
             if(check)
             {
                 Bitmap bitmap= byteToBitmap(note.getImage());
-                Log.v("bitmap","잘받긴햇니?"+byteToBitmap(note.getImage()));
+               // Log.v("bitmap","잘받긴햇니?"+byteToBitmap(note.getImage()));
                 holder.thumbnail.setImageBitmap(bitmap);
                 holder.thumbnail.setVisibility(View.VISIBLE);
                // holder.thumbnail.setImageBitmap(BitmapManager.base64ToBitmap(note.getPhoto()));

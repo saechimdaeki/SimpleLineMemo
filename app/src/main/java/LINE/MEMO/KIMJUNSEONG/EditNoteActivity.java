@@ -93,25 +93,24 @@ public class EditNoteActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 imageView = (ImageView) view;
-                if(position==0)
+                if(position==0)  ////첫번째 사진클릭할시에만 썸네일 올라가게끔
                 {
                     abcd=true;
                     imgthumb=(ImageView)view;
-                    d=imgthumb.getDrawable();
-                    bitmap=getBitmap((VectorDrawable) d);
+                    d=imgthumb.getDrawable();              //test 문제시 주석해제
+                    bitmap=getBitmap((VectorDrawable) d);  //test 문제시 주석해제
+
                 }
                 showdial();
 
             }
         });
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.note_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -127,9 +126,7 @@ public class EditNoteActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
     private void onSaveNote() {
-
         String text = inputNote.getText().toString();
         String textbody = inputbody.getText().toString();
         if(abcd)
@@ -140,8 +137,6 @@ public class EditNoteActivity extends AppCompatActivity {
         {
             Drawable drawable=getResources().getDrawable(R.drawable.ic_check_box_outline_blank_black_24dp);
             bitmap=getBitmap((VectorDrawable) drawable);
-
-
             image=BitmapManager.bitmapToByte(bitmap);
         }
 
@@ -203,7 +198,6 @@ public class EditNoteActivity extends AppCompatActivity {
         });
         builder.show();
     }
-
     private void inserturl() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText et = new EditText(getApplicationContext());
@@ -211,13 +205,18 @@ public class EditNoteActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                String abcd = et.getText().toString();
+                String bts = et.getText().toString();
                 Glide.with(getApplicationContext())
                         .asBitmap()
-                        .load(abcd)
+                        .load(bts)
                         .into(new CustomTarget<Bitmap>(50, 50) {
                             @Override
                             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                if(abcd){
+                                    imgthumb.setImageBitmap(resource);
+
+                                }
+                                else
                                 imageView.setImageBitmap(resource);
                             }
                             @Override
@@ -282,7 +281,7 @@ public class EditNoteActivity extends AppCompatActivity {
             }
             setImage();
         } else if (requestCode == CAMERA) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
+            Bitmap bitmap2 = BitmapFactory.decodeFile(imageFilePath);
             ExifInterface exif = null;
             try {
                 exif = new ExifInterface(imageFilePath);
@@ -297,14 +296,23 @@ public class EditNoteActivity extends AppCompatActivity {
             } else {
                 exifDegree = 0;
             }
+            if (abcd){
+                imgthumb.setImageBitmap(rotate(bitmap2,exifDegree));
+            }
+            else
             imageView.setImageBitmap(rotate(bitmap, exifDegree));
         }
     }
     private void setImage() {
         BitmapFactory.Options options = new BitmapFactory.Options();
         Bitmap originalBm = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+        if(abcd){
+            imgthumb.setImageBitmap(originalBm);
+
+        }
+        else
         imageView.setImageBitmap(originalBm);
-        imageView.setVisibility(View.VISIBLE);
+        //imageView.setVisibility(View.VISIBLE);
         file = null;
     }
 
