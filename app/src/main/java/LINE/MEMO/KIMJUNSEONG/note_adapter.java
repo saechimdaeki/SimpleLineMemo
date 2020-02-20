@@ -34,11 +34,21 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
     @Override
     public void onBindViewHolder(noteholder holder, int position) {
         final Note note = getnotes(position);
-
+       String tmp ="";
         if (note != null) {
             holder.notetext.setText(note.getText());
             holder.notedate.setText(NoteDate.format(note.getDate()));
+            if(note.getBody().length()>=100)
+            {
+                for(int i=0; i<100; i++)
+                {
+                    tmp+=note.getBody().charAt(i);
+                }
+                tmp+=".....";
+                holder.notebody.setText(tmp);
+            }else
             holder.notebody.setText(note.getBody());
+
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
