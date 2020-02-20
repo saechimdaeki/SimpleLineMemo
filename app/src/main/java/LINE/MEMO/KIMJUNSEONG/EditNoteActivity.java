@@ -66,7 +66,7 @@ public class EditNoteActivity extends AppCompatActivity {
     Bitmap bitmap;
     Drawable d;
 
-    //TODO : 이미지가 변경되고 유지되게끔 해야함 
+    //TODO : 이미지가 변경되고 유지되게끔 해야함
     public Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,
             R.drawable.test4, R.drawable.test5, R.drawable.test5,
             R.drawable.test6, R.drawable.test7, R.drawable.test8,
@@ -121,6 +121,10 @@ public class EditNoteActivity extends AppCompatActivity {
             else
                 onSaveNote();
         }
+        if(id==R.id.delete_note)
+        {
+            onDeleteNote();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -157,6 +161,10 @@ public class EditNoteActivity extends AppCompatActivity {
             }
             finish();
         }
+    }
+    private void onDeleteNote(){
+        dao.deleteNote(tmp);
+        finish();
     }
 
     void showdial() {
@@ -368,8 +376,6 @@ public class EditNoteActivity extends AppCompatActivity {
             return mImageView;
         }
     }
-
-
     @Override   /////상태저장
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
