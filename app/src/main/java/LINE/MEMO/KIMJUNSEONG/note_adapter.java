@@ -65,9 +65,8 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
             {
                 Bitmap bitmap= byteToBitmap(note.getImage());
                // Log.v("bitmap","잘받긴햇니?"+byteToBitmap(note.getImage()));
-                holder.thumbnail.setImageBitmap(bitmap);
+                holder.thumbnail.setImageBitmap(Bitmap.createScaledBitmap(bitmap,100,100,false));
                 holder.thumbnail.setVisibility(View.VISIBLE);
-               // holder.thumbnail.setImageBitmap(BitmapManager.base64ToBitmap(note.getPhoto()));
             }
         }
     }
@@ -87,12 +86,14 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
     class noteholder extends RecyclerView.ViewHolder {
         TextView notetext, notedate, notebody;
         ImageView thumbnail;
+        int height;
         public noteholder(View itemView) {
             super(itemView);
             notedate = itemView.findViewById(R.id.note_Date);
             notetext = itemView.findViewById(R.id.note);
             notebody = itemView.findViewById(R.id.note_body);
             thumbnail = itemView.findViewById(R.id.thumbnail_note);
+
 
 
         }

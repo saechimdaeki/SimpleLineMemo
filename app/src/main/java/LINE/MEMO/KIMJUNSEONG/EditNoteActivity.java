@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
 import android.net.Uri;
@@ -39,6 +40,7 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -97,8 +99,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 {
                     abcd=true;
                     imgthumb=(ImageView)view;
-                    d=imgthumb.getDrawable();              //test 문제시 주석해제
-                    bitmap=getBitmap((VectorDrawable) d);  //test 문제시 주석해제
+
 
                 }
                 showdial();
@@ -209,12 +210,12 @@ public class EditNoteActivity extends AppCompatActivity {
                 Glide.with(getApplicationContext())
                         .asBitmap()
                         .load(bts)
-                        .into(new CustomTarget<Bitmap>(50, 50) {
+                        .into(new CustomTarget<Bitmap>(60, 60) {
                             @Override
                             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                                 if(abcd){
                                     imgthumb.setImageBitmap(resource);
-
+                                    bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
                                 }
                                 else
                                 imageView.setImageBitmap(resource);
@@ -298,9 +299,12 @@ public class EditNoteActivity extends AppCompatActivity {
             }
             if (abcd){
                 imgthumb.setImageBitmap(rotate(bitmap2,exifDegree));
+                imgthumb.setMaxWidth(50);
+                imgthumb.setMaxHeight(50);
+                bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
             }
             else
-            imageView.setImageBitmap(rotate(bitmap, exifDegree));
+            imageView.setImageBitmap(rotate(bitmap2, exifDegree));
         }
     }
     private void setImage() {
@@ -308,7 +312,7 @@ public class EditNoteActivity extends AppCompatActivity {
         Bitmap originalBm = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
         if(abcd){
             imgthumb.setImageBitmap(originalBm);
-
+            bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
         }
         else
         imageView.setImageBitmap(originalBm);
@@ -348,7 +352,8 @@ public class EditNoteActivity extends AppCompatActivity {
     private Bitmap rotate(Bitmap bitmap, float degree) {
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        return Bitmap.createScaledBitmap(bitmap,400,400,true);
+        //(bitmap, 0, 0, 400, 400, matrix, true);
     }
     public class ImageAdapterGridView extends BaseAdapter {
         private Context mContext;
@@ -410,6 +415,44 @@ public class EditNoteActivity extends AppCompatActivity {
         vectorDrawable.draw(canvas);
         return bitmap;
     }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+
+    }
+    ////원본 상하지않게 리사이즈
+    private Bitmap resize(Context context,Uri uri,int resize){
+        Bitmap resizeBitmap=null;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        try {
+            BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, options); // 1번
+
+            int width = options.outWidth;
+            int height = options.outHeight;
+            int samplesize = 1;
+
+            while (true) {//2번
+                if (width / 2 < resize || height / 2 < resize)
+                    break;
+                width /= 2;
+                height /= 2;
+                samplesize *= 2;
+            }
+
+            options.inSampleSize = samplesize;
+            Bitmap bitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, options); //3번
+            resizeBitmap=bitmap;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return resizeBitmap;
+    }
+
+
+
+
 
 
 }
