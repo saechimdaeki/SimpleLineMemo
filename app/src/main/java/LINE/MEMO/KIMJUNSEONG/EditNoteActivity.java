@@ -210,12 +210,14 @@ public class EditNoteActivity extends AppCompatActivity {
                 Glide.with(getApplicationContext())
                         .asBitmap()
                         .load(bts)
+                        .error(R.drawable.glideerror)
                         .into(new CustomTarget<Bitmap>(60, 60) {
                             @Override
                             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                                 if(abcd){
                                     imgthumb.setImageBitmap(resource);
                                     bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
+
                                 }
                                 else
                                 imageView.setImageBitmap(resource);
@@ -299,9 +301,8 @@ public class EditNoteActivity extends AppCompatActivity {
             }
             if (abcd){
                 imgthumb.setImageBitmap(rotate(bitmap2,exifDegree));
-                imgthumb.setMaxWidth(50);
-                imgthumb.setMaxHeight(50);
                 bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
+               //bitmap= Bitmap.createScaledBitmap(bitmap,400,400,true);
             }
             else
             imageView.setImageBitmap(rotate(bitmap2, exifDegree));
@@ -313,6 +314,7 @@ public class EditNoteActivity extends AppCompatActivity {
         if(abcd){
             imgthumb.setImageBitmap(originalBm);
             bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
+            bitmap= Bitmap.createScaledBitmap(bitmap,400,400,true);
         }
         else
         imageView.setImageBitmap(originalBm);
@@ -420,7 +422,7 @@ public class EditNoteActivity extends AppCompatActivity {
         super.onDestroy();
 
     }
-    ////원본 상하지않게 리사이즈
+    ////원본 상하지않게 리사이즈  but     안쓰는 메소드
     private Bitmap resize(Context context,Uri uri,int resize){
         Bitmap resizeBitmap=null;
 
