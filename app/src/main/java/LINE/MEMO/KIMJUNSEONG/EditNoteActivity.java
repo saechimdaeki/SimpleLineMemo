@@ -280,6 +280,7 @@ public class EditNoteActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != Activity.RESULT_OK) {
             Toast.makeText(this, "취소 되었습니다.", Toast.LENGTH_SHORT).show();
+            glidecheck=false;
             if (file != null) {
                 if (file.exists()) {
                     if (file.delete()) {
@@ -288,7 +289,8 @@ public class EditNoteActivity extends AppCompatActivity {
                 }
             }
             return;
-        }
+        }else if(requestCode==Activity.RESULT_OK)
+            glidecheck=true;
         if (requestCode == gallery) {
             Uri photoUri = data.getData();
             Cursor cursor = null;
@@ -319,8 +321,10 @@ public class EditNoteActivity extends AppCompatActivity {
             if (exif != null) {
                 exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
                 exifDegree = exifOrientationToDegrees(exifOrientation);
+                glidecheck=true;
             } else {
                 exifDegree = 0;
+                glidecheck=false;
             }
             if (abcd){
                 imgthumb.setImageBitmap(rotate(bitmap2,exifDegree));
@@ -338,6 +342,7 @@ public class EditNoteActivity extends AppCompatActivity {
             imgthumb.setImageBitmap(originalBm);
             bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
             bitmap= Bitmap.createScaledBitmap(bitmap,400,400,true);
+            glidecheck=true;
         }
         else
         imageView.setImageBitmap(originalBm);
