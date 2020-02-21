@@ -220,6 +220,7 @@ public class EditNoteActivity extends AppCompatActivity {
                                 if(abcd){
                                     imgthumb.setImageBitmap(resource);
                                     bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
+                                    glidecheck=true;
                                 }
                                 else{
                                     imageView.setImageBitmap(resource);
@@ -228,6 +229,7 @@ public class EditNoteActivity extends AppCompatActivity {
                             }
                             @Override
                             public void onLoadCleared(@Nullable Drawable placeholder) {
+                                glidecheck=true;
                             }
                             @Override
                             public void onLoadFailed(@Nullable Drawable errorDrawable) {
