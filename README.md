@@ -6,5 +6,5 @@
 
 ### Todo 
 
-- 2020 02 19 기준 glide 예외처리 및 thumbnail및 이미지저장 남음. 그외는 전부 완료 
+- ~2020 02 19 기준 glide 예외처리 및 thumbnail및 이미지저장 남음. 그외는 전부 완료~  
 - 2020 02 21 기준 각 editnote class마다 gridview image들의 변경값이 남아있어야함 
