@@ -48,6 +48,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static LINE.MEMO.KIMJUNSEONG.BitmapManager.byteToBitmap;
+
 public class EditNoteActivity extends AppCompatActivity {
     public static final String NOTE_EXTRA_KEY = "note_id";
     private static final int gallery = 1;
@@ -69,7 +71,9 @@ public class EditNoteActivity extends AppCompatActivity {
     Bitmap bitmap;
     private boolean glidecheck=true;
     private boolean otherimg=true; //썸네일이아님
-
+    private int tmpposition;//gridview이미지 위함.
+    Bitmap bitmapthumb; ///db에서 가져온첫번째 그리드뷰 이미지 
+    boolean dbcheck=true;
     //TODO : 이미지가 변경되고 유지되게끔 해야함
     private Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,
             R.drawable.test4, R.drawable.test5, R.drawable.test5,
@@ -83,7 +87,7 @@ public class EditNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edite);
         gridView = findViewById(R.id.gridView01);
-        gridView.setAdapter(new ImageAdapterGridView(this));
+
         inputNote = findViewById(R.id.input_note);
         inputbody = findViewById(R.id.input_note_body);
         abcd=false;
@@ -93,11 +97,20 @@ public class EditNoteActivity extends AppCompatActivity {
             tmp = dao.getNoteById(id);
             inputNote.setText(tmp.getText());
             inputbody.setText(tmp.getBody());
+            bitmapthumb= byteToBitmap(tmp.getImage());
+            Drawable drawable=getResources().getDrawable(R.drawable.ic_check_box_outline_blank_black_24dp);
+            Bitmap bitmapcmp=getBitmap((VectorDrawable) drawable);
+            if(sameAs(bitmapthumb,bitmapcmp)){  ////비교
+                dbcheck=true;  //같아도 + gridview가 나오게끔 표시
+            }else dbcheck=false;    ///다르면 썸네일 이미지를 그대로 가져옴
+
         } else inputNote.setFocusable(true);
+        gridView.setAdapter(new ImageAdapterGridView(this));
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 imageView = (ImageView) view;
+                tmpposition=position;
                 if(position==0)  ////첫번째 사진클릭할시에만 썸네일 올라가게끔
                 {
                     abcd=true;
@@ -136,6 +149,14 @@ public class EditNoteActivity extends AppCompatActivity {
         if(abcd && glidecheck)///여기선 otherimg가 필요가없습니다.
         {
             image=BitmapManager.bitmapToByte(bitmap);
+
+        }
+        else if(!dbcheck)     ////,예외적으로 db체크가 false일시에 다시 editnote들어온다음에 저장하여도 사진이남게끔
+        {
+          //  Drawable drawable=bitmapthumb;
+            image=BitmapManager.bitmapToByte(bitmapthumb);
+          // image= BitmapManager.bitmapToByte(getBitmap((BitmapDrawable) drawable));
+
         }
         else
         {
@@ -416,40 +437,6 @@ public class EditNoteActivity extends AppCompatActivity {
         matrix.postRotate(degree);
         return Bitmap.createScaledBitmap(bitmap,400,400,true);
     }
-    public class ImageAdapterGridView extends BaseAdapter {
-        private Context mContext;
-
-        public ImageAdapterGridView(Context c) {
-            mContext = c;
-        }
-
-        public int getCount() {
-            return mThumblds.length;
-        }
-
-        public Object getItem(int position) {
-            return null;
-        }
-
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ImageView mImageView;
-
-            if (convertView == null) {
-                mImageView = new ImageView(mContext);
-                mImageView.setLayoutParams(new GridView.LayoutParams(200, 200));
-                mImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                mImageView.setPadding(16, 16, 16, 16);
-            } else {
-                mImageView = (ImageView) convertView;
-            }
-            mImageView.setImageResource(mThumblds[position]);
-            return mImageView;
-        }
-    }
     @Override   /////상태저장
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -489,6 +476,50 @@ public class EditNoteActivity extends AppCompatActivity {
         ByteBuffer buffer2 = ByteBuffer.allocate(bitmap2.getHeight() * bitmap2.getRowBytes());
         bitmap2.copyPixelsToBuffer(buffer2);
         return Arrays.equals(buffer1.array(), buffer2.array());
+    }
+
+
+
+    public class ImageAdapterGridView extends BaseAdapter {
+        private Context mContext;
+
+        public ImageAdapterGridView(Context c) {
+            mContext = c;
+        }
+
+        public int getCount() {
+            return mThumblds.length;
+        }
+
+        public Object getItem(int position) {
+            return null;
+        }
+
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ImageView mImageView;
+
+            if (convertView == null) {
+                mImageView = new ImageView(mContext);
+                mImageView.setLayoutParams(new GridView.LayoutParams(200, 200));
+                mImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                mImageView.setPadding(16, 16, 16, 16);
+            } else {
+                mImageView = (ImageView) convertView;
+            }
+            if(position==0 && !dbcheck)
+            {
+                Drawable drawable=new BitmapDrawable(bitmapthumb);
+                mImageView.setImageDrawable(drawable);
+            }
+            else
+            mImageView.setImageResource(mThumblds[position]);
+
+            return mImageView;
+        }
     }
 
 

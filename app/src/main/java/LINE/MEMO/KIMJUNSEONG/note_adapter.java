@@ -37,7 +37,7 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
         if (note != null) {
             holder.notetext.setText(note.getText());
             holder.notedate.setText(NoteDate.format(note.getDate()));
-            if(note.getBody().length()>=80)
+            if(note.getBody().length()>=80) /* 글자수 80글자이상일시 본문의 일부만 나오게 */
             {
                 for(int i=0; i<80; i++)
                 {
