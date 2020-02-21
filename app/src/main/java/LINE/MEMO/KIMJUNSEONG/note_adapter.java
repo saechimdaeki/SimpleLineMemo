@@ -18,7 +18,7 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
     public Context context;
     public ArrayList<Note> notelist;
     private NoteEventListener listener;
-    boolean check=EditNoteActivity.abcd;
+    boolean check=EditNoteActivity.thumbnailclick;
 
     public note_adapter(Context context, ArrayList<Note> notelist) {
         this.notelist = notelist;

@@ -56,7 +56,7 @@ public class EditNoteActivity extends AppCompatActivity {
     private static final int CAMERA = 2;
     private static final int imgURL = 3;
     ImageView imageView;
-    public static boolean abcd=false;
+    public static boolean thumbnailclick =false;
     GridView gridView;
     private EditText inputNote;
     private NotesDao dao;
@@ -90,7 +90,7 @@ public class EditNoteActivity extends AppCompatActivity {
 
         inputNote = findViewById(R.id.input_note);
         inputbody = findViewById(R.id.input_note_body);
-        abcd=false;
+        thumbnailclick =false;
         dao = NotesDB.getInstance(this).notesDao();
         if (getIntent().getExtras() != null) {
             int id = getIntent().getExtras().getInt(NOTE_EXTRA_KEY, 0);
@@ -113,7 +113,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 tmpposition=position;
                 if(position==0)  ////첫번째 사진클릭할시에만 썸네일 올라가게끔
                 {
-                    abcd=true;
+                    thumbnailclick =true;
                     imgthumb=(ImageView)view;
                     otherimg=false;
                 }else
@@ -146,7 +146,7 @@ public class EditNoteActivity extends AppCompatActivity {
     private void onSaveNote() {
         String text = inputNote.getText().toString();
         String textbody = inputbody.getText().toString();
-        if(abcd && glidecheck)///여기선 otherimg가 필요가없습니다.
+        if(thumbnailclick && glidecheck)///여기선 otherimg가 필요가없습니다.
         {
             image=BitmapManager.bitmapToByte(bitmap);
 
@@ -227,9 +227,9 @@ public class EditNoteActivity extends AppCompatActivity {
         builder.show();
     }
     private void deletephoto(){
-        if(abcd&& glidecheck &&!otherimg){
+        if(thumbnailclick && glidecheck &&!otherimg){
             imgthumb.setImageResource(R.drawable.glideerror);
-            abcd=false;
+            thumbnailclick =false;
 
         } else {
             imageView.setImageResource(R.drawable.glideerror);
@@ -252,7 +252,7 @@ public class EditNoteActivity extends AppCompatActivity {
                         .into(new CustomTarget<Bitmap>(60, 60) {
                             @Override
                             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                if(abcd &&glidecheck &&!otherimg){
+                                if(thumbnailclick &&glidecheck &&!otherimg){
                                     imgthumb.setImageBitmap(resource);
                                     bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
                                     glidecheck=true;
@@ -274,9 +274,9 @@ public class EditNoteActivity extends AppCompatActivity {
                             public void onLoadFailed(@Nullable Drawable errorDrawable) {
                                 glidecheck=false;
                                 Toast.makeText(EditNoteActivity.this, "존재하지 않는 URL이거나 맞지않는 확장자입니다.", Toast.LENGTH_SHORT).show();
-                                if(abcd){
+                                if(thumbnailclick){
                                     imgthumb.setImageResource(R.drawable.glideerror);
-                                    abcd=false;
+                                    thumbnailclick =false;
                                     otherimg=false;
                                 }else{
                                     otherimg=true;
@@ -374,7 +374,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 exifDegree = 0;
                 glidecheck=false;
             }
-            if (abcd && !otherimg){
+            if (thumbnailclick && !otherimg ){
                 imgthumb.setImageBitmap(rotate(bitmap2,exifDegree));
                 bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
                 otherimg=false;
@@ -389,7 +389,7 @@ public class EditNoteActivity extends AppCompatActivity {
     private void setImage() {
         BitmapFactory.Options options = new BitmapFactory.Options();
         Bitmap originalBm = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-        if(abcd && !otherimg){
+        if(thumbnailclick && !otherimg){
             imgthumb.setImageBitmap(originalBm);
             bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
             bitmap= Bitmap.createScaledBitmap(bitmap,400,400,true);
