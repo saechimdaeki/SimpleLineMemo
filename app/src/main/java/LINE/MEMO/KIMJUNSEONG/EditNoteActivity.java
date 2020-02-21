@@ -40,10 +40,11 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -67,14 +68,17 @@ public class EditNoteActivity extends AppCompatActivity {
     ImageView imgthumb;
     Bitmap bitmap;
     Drawable d;
+    private boolean glidecheck=true;
 
     //TODO : 이미지가 변경되고 유지되게끔 해야함
-    public Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,
+    private Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,
             R.drawable.test4, R.drawable.test5, R.drawable.test5,
             R.drawable.test6, R.drawable.test7, R.drawable.test8,
             R.drawable.test9, R.drawable.test10, R.drawable.test11,
             R.drawable.test12, R.drawable.test13, R.drawable.test14,
     };
+    private Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +103,6 @@ public class EditNoteActivity extends AppCompatActivity {
                 {
                     abcd=true;
                     imgthumb=(ImageView)view;
-
 
                 }
                 showdial();
@@ -130,7 +133,7 @@ public class EditNoteActivity extends AppCompatActivity {
     private void onSaveNote() {
         String text = inputNote.getText().toString();
         String textbody = inputbody.getText().toString();
-        if(abcd)
+        if(abcd && glidecheck)
         {
             image=BitmapManager.bitmapToByte(bitmap);
         }
@@ -210,27 +213,45 @@ public class EditNoteActivity extends AppCompatActivity {
                 Glide.with(getApplicationContext())
                         .asBitmap()
                         .load(bts)
-                        .error(R.drawable.glideerror)
+                        .error(R.drawable.cancel)
                         .into(new CustomTarget<Bitmap>(60, 60) {
                             @Override
                             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                                 if(abcd){
                                     imgthumb.setImageBitmap(resource);
                                     bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
+                                }
+                                else{
+                                    imageView.setImageBitmap(resource);
 
                                 }
-                                else
-                                imageView.setImageBitmap(resource);
                             }
                             @Override
                             public void onLoadCleared(@Nullable Drawable placeholder) {
                             }
+                            @Override
+                            public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                                glidecheck=false;
+                                Toast.makeText(EditNoteActivity.this, "존재하지 않는 URL이거나 맞지않는 확장자입니다.", Toast.LENGTH_SHORT).show();
+
+                            }
+
+
                         });
 
             }
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private Bitmap getBitmapFromVector(VectorDrawable vectorDrawable) {
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return bitmap;
     }
 
     private File createImageFile() throws IOException {
@@ -318,7 +339,6 @@ public class EditNoteActivity extends AppCompatActivity {
         }
         else
         imageView.setImageBitmap(originalBm);
-        //imageView.setVisibility(View.VISIBLE);
         file = null;
     }
 
@@ -355,7 +375,6 @@ public class EditNoteActivity extends AppCompatActivity {
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
         return Bitmap.createScaledBitmap(bitmap,400,400,true);
-        //(bitmap, 0, 0, 400, 400, matrix, true);
     }
     public class ImageAdapterGridView extends BaseAdapter {
         private Context mContext;
@@ -422,35 +441,17 @@ public class EditNoteActivity extends AppCompatActivity {
         super.onDestroy();
 
     }
-    ////원본 상하지않게 리사이즈  but     안쓰는 메소드
-    private Bitmap resize(Context context,Uri uri,int resize){
-        Bitmap resizeBitmap=null;
+    private boolean sameAs(Bitmap bitmap1, Bitmap bitmap2) {
+        ByteBuffer buffer1 = ByteBuffer.allocate(bitmap1.getHeight() * bitmap1.getRowBytes());
+        bitmap1.copyPixelsToBuffer(buffer1);
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        try {
-            BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, options); // 1번
-
-            int width = options.outWidth;
-            int height = options.outHeight;
-            int samplesize = 1;
-
-            while (true) {//2번
-                if (width / 2 < resize || height / 2 < resize)
-                    break;
-                width /= 2;
-                height /= 2;
-                samplesize *= 2;
-            }
-
-            options.inSampleSize = samplesize;
-            Bitmap bitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, options); //3번
-            resizeBitmap=bitmap;
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return resizeBitmap;
+        ByteBuffer buffer2 = ByteBuffer.allocate(bitmap2.getHeight() * bitmap2.getRowBytes());
+        bitmap2.copyPixelsToBuffer(buffer2);
+        return Arrays.equals(buffer1.array(), buffer2.array());
     }
+
+
+
 
 
 
