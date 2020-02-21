@@ -65,10 +65,10 @@ public class EditNoteActivity extends AppCompatActivity {
     private Uri photoUri;
     private File file;
     byte[]image;    ///바이트
-    ImageView imgthumb;
+    ImageView imgthumb;   ////썸네일 이미지
     Bitmap bitmap;
-    Drawable d;
     private boolean glidecheck=true;
+    private boolean otherimg=true; //썸네일이아님
 
     //TODO : 이미지가 변경되고 유지되게끔 해야함
     private Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,
@@ -77,7 +77,6 @@ public class EditNoteActivity extends AppCompatActivity {
             R.drawable.test9, R.drawable.test10, R.drawable.test11,
             R.drawable.test12, R.drawable.test13, R.drawable.test14,
     };
-    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,8 +102,9 @@ public class EditNoteActivity extends AppCompatActivity {
                 {
                     abcd=true;
                     imgthumb=(ImageView)view;
-
-                }
+                    otherimg=false;
+                }else
+                    otherimg=true;
                 showdial();
 
             }
@@ -133,7 +133,7 @@ public class EditNoteActivity extends AppCompatActivity {
     private void onSaveNote() {
         String text = inputNote.getText().toString();
         String textbody = inputbody.getText().toString();
-        if(abcd && glidecheck)
+        if(abcd && glidecheck)///여기선 otherimg가 필요가없습니다.
         {
             image=BitmapManager.bitmapToByte(bitmap);
         }
@@ -171,9 +171,10 @@ public class EditNoteActivity extends AppCompatActivity {
         ListItems.add("갤러리에서 가져오기");
         ListItems.add("카메라로 촬영하기");
         ListItems.add("URL로 가져오기");
+        ListItems.add("해당 이미지 삭제");
         final CharSequence[] items = ListItems.toArray(new String[ListItems.size()]);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("이미지를 추가하려고해요 방식을 알려주세요~");
+        builder.setTitle("이미지를 추가하거나 삭제할 수 있습니다");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int pos) {
                 if (pos == 0) //갤러리
@@ -197,15 +198,28 @@ public class EditNoteActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(EditNoteActivity.this, "권한을 허용해주세요", Toast.LENGTH_SHORT).show();
                     }
+                }else if(pos==3){
+                    deletephoto();
                 }
             }
         });
         builder.show();
     }
+    private void deletephoto(){
+        if(abcd&& glidecheck &&!otherimg){
+            imgthumb.setImageResource(R.drawable.glideerror);
+            abcd=false;
+
+        } else {
+            imageView.setImageResource(R.drawable.glideerror);
+            glidecheck=false;
+            otherimg=true;
+        }
+    }
     private void inserturl() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText et = new EditText(getApplicationContext());
-        builder.setTitle("URL을 입력해주세요").setMessage("URL을 입력바랍니다").setView(et);
+        builder.setTitle("URL을 입력해주세요").setMessage("URL을 입력해주세요").setView(et);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
@@ -217,15 +231,19 @@ public class EditNoteActivity extends AppCompatActivity {
                         .into(new CustomTarget<Bitmap>(60, 60) {
                             @Override
                             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                if(abcd){
+                                if(abcd &&glidecheck &&!otherimg){
                                     imgthumb.setImageBitmap(resource);
                                     bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
                                     glidecheck=true;
                                 }
                                 else{
+                                    otherimg=true;
                                     imageView.setImageBitmap(resource);
-
                                 }
+                            }
+                            @Override
+                            public void onLoadStarted(@Nullable Drawable placeholder) {
+                               Toast.makeText(EditNoteActivity.this, "잠시만 이미지를 받아올때까지 기다려주세요", Toast.LENGTH_SHORT).show();
                             }
                             @Override
                             public void onLoadCleared(@Nullable Drawable placeholder) {
@@ -235,6 +253,14 @@ public class EditNoteActivity extends AppCompatActivity {
                             public void onLoadFailed(@Nullable Drawable errorDrawable) {
                                 glidecheck=false;
                                 Toast.makeText(EditNoteActivity.this, "존재하지 않는 URL이거나 맞지않는 확장자입니다.", Toast.LENGTH_SHORT).show();
+                                if(abcd){
+                                    imgthumb.setImageResource(R.drawable.glideerror);
+                                    abcd=false;
+                                    otherimg=false;
+                                }else{
+                                    otherimg=true;
+                                    imageView.setImageResource(R.drawable.glideerror);
+                                }
 
                             }
 
@@ -246,7 +272,7 @@ public class EditNoteActivity extends AppCompatActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-
+    /*  사용할 수 있으므로 제거해서는 안되는 메소드     */
     private Bitmap getBitmapFromVector(VectorDrawable vectorDrawable) {
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
                 vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -281,6 +307,7 @@ public class EditNoteActivity extends AppCompatActivity {
         if (resultCode != Activity.RESULT_OK) {
             Toast.makeText(this, "취소 되었습니다.", Toast.LENGTH_SHORT).show();
             glidecheck=false;
+            otherimg=true;
             if (file != null) {
                 if (file.exists()) {
                     if (file.delete()) {
@@ -326,26 +353,32 @@ public class EditNoteActivity extends AppCompatActivity {
                 exifDegree = 0;
                 glidecheck=false;
             }
-            if (abcd){
+            if (abcd && !otherimg){
                 imgthumb.setImageBitmap(rotate(bitmap2,exifDegree));
                 bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
+                otherimg=false;
                //bitmap= Bitmap.createScaledBitmap(bitmap,400,400,true);
             }
-            else
-            imageView.setImageBitmap(rotate(bitmap2, exifDegree));
+            else{
+                imageView.setImageBitmap(rotate(bitmap2, exifDegree));
+                otherimg=true;
+            }
         }
     }
     private void setImage() {
         BitmapFactory.Options options = new BitmapFactory.Options();
         Bitmap originalBm = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-        if(abcd){
+        if(abcd && !otherimg){
             imgthumb.setImageBitmap(originalBm);
             bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
             bitmap= Bitmap.createScaledBitmap(bitmap,400,400,true);
             glidecheck=true;
+            otherimg=false;
         }
-        else
-        imageView.setImageBitmap(originalBm);
+        else{
+            imageView.setImageBitmap(originalBm);
+            otherimg=true;
+        }
         file = null;
     }
 
@@ -448,6 +481,7 @@ public class EditNoteActivity extends AppCompatActivity {
         super.onDestroy();
 
     }
+    /* 비트맵 비교하려고 썻던메소드  */
     private boolean sameAs(Bitmap bitmap1, Bitmap bitmap2) {
         ByteBuffer buffer1 = ByteBuffer.allocate(bitmap1.getHeight() * bitmap1.getRowBytes());
         bitmap1.copyPixelsToBuffer(buffer1);
