@@ -77,19 +77,14 @@ public class EditNoteActivity extends AppCompatActivity {
     private int tmpposition;//gridview이미지 위함.
     Bitmap bitmapthumb; ///db에서 가져온첫번째 그리드뷰 이미지 
     Bitmap bitmapgrid2,bitmapgrid3,bitmapgrid4,bitmapgrid5; //db에서가져온 그리드뷰 나머지들
+    private boolean twist2, twist3, twist4, twist5; ///이미지 꼬임방지
     byte[]image;    ///바이트
     byte[] imagegrid2,imagegrid3,imagegrid4,imagegrid5,imagegrid6,imagegrid7,imagegrid8,imagegrid9,imagegrid10;
     //TODO : 이미지가 변경되고 유지되게끔 해야함
     private Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,
             R.drawable.test4, R.drawable.test5
     };
-    /*
-    private boolean[] imageclickcheck={   /////그리드뷰 이미지가 클릭되었는지
-      false, false,false,false,false,false,false,false,false,false
-    };*/
-
     Boolean imageclickcheck2=false,imageclickcheck3=false,imageclickcheck4=false,imageclickcheck5=false;/////그리드뷰 이미지가 클릭되었는지
-
     boolean dbcheck=true; //썸네일db와 그리드 첫번째 db비교
     boolean dbcheckgrid2=true,dbcheckgrid3=true,dbcheckgrid4=true,dbcheckgrid5=true; //나머지 비교
     @Override
@@ -133,16 +128,35 @@ public class EditNoteActivity extends AppCompatActivity {
                     thumbnailclick =true;
                     imgthumb=(ImageView)view;
                     otherimg=false;
+
                 }else{
                     otherimg=true;
-                    if(position==1)
+                    if(position==1){  ///그리드뷰의 이미지삭제후 세이브전에 다시 이미지추가할경우 fix.  but hardcoding..
                         imageclickcheck2=true;
-                    if(position==2)
+                        img2=(ImageView)view;
+                        delete2=false;
+                        twist2=true;
+                    }
+                    if(position==2){
                         imageclickcheck3=true;
-                    if(position==3)
-                        imageclickcheck4=true;
-                    if(position==4)
+                        img3=(ImageView)view;
+                        delete3=false;
+                        twist3=true;
+
+                    }
+                    if(position==3) {
+                        imageclickcheck4 = true;
+                        img4=(ImageView)view;
+                        delete4 = false;
+                        twist4=true;
+                    }
+                    if(position==4){
                         imageclickcheck5=true;
+                        img5=(ImageView)view;
+                        delete5=false;
+                        twist5=true;
+                    }
+
 
                 }
 
@@ -198,32 +212,43 @@ public class EditNoteActivity extends AppCompatActivity {
             image=BitmapManager.bitmapToByte(bitmap);
            // Log.v("체크지점3","체크지점3");
         }
+        /*  썸네일 아닌 나머지   */
         if(!imageclickcheck2)   //두번째 이미지 클릭안했을때
         {
             Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
             bitmap=getBitmap((VectorDrawable) drawable);
             imagegrid2=BitmapManager.bitmapToByte(bitmap);
+
             if(!dbcheckgrid2){  ///이미지 클릭안했고 기존에 이미지 가지고 있었을때
                 imagegrid2=BitmapManager.bitmapToByte(bitmapgrid2);
+                tmp.setGridimage2(imagegrid2);
             }
-        }else{
-            imagegrid2=BitmapManager.bitmapToByte(bitmapgrid2);
-            if(delete2)
+        }else{  ///클릭했을때
+            if(delete2) ///삭제했을때
             {
                 Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
                 bitmap=getBitmap((VectorDrawable) drawable);
                 imagegrid2=BitmapManager.bitmapToByte(bitmap);
             }else
                 imagegrid2=BitmapManager.bitmapToByte(bitmapgrid2);
+            String string=new String(imagegrid2);
+            imageclickcheck2=false;
+         //   tmp.setGridimage2(imagegrid2);
+            Log.v("두번째 저장테스트","두번째저장테스트"+string);
         }
         if(!imageclickcheck3){
             if(!dbcheckgrid3){
                 imagegrid3=BitmapManager.bitmapToByte(bitmapgrid3);
                // Log.v("호출이쪽","호출이쪽");
+                String string=new String(imagegrid3);
+                Log.v("세번째 저장테스트","세번째저장테스트1"+string);
             }else{
                 Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
                 bitmap=getBitmap((VectorDrawable) drawable);
                 imagegrid3=BitmapManager.bitmapToByte(bitmap);
+                String string=new String(imagegrid3);
+                Log.v("세번째 저장테스트","세번째저장테스트2"+string);
+
               //  Log.v("호출여기","호출여기");
             }
         }else{
@@ -231,10 +256,16 @@ public class EditNoteActivity extends AppCompatActivity {
                 Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
                 bitmap=getBitmap((VectorDrawable) drawable);
                 imagegrid3=BitmapManager.bitmapToByte(bitmap);
+                String string=new String(imagegrid3);
+                Log.v("세번째 저장테스트","세번째저장테스트1"+string);;
             }
             else
             imagegrid3=BitmapManager.bitmapToByte(bitmapgrid3);
          //   Log.v("호출저짝","호출저짝");
+            String string=new String(imagegrid3);
+            Log.v("세번째 저장테스트","세번째저장테스트2"+string);
+            imageclickcheck3=false;
+
         }
 
         if(!imageclickcheck4){
@@ -253,7 +284,6 @@ public class EditNoteActivity extends AppCompatActivity {
             else
                 imagegrid4=BitmapManager.bitmapToByte(bitmapgrid4);
         }
-
         if(!imageclickcheck5){
             Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
             bitmap=getBitmap((VectorDrawable) drawable);
@@ -293,8 +323,12 @@ public class EditNoteActivity extends AppCompatActivity {
         }
     }
     private void onDeleteNote(){
-        dao.deleteNote(tmp);
+        if(tmp==null) ////글내용이없을때 삭제버튼누르면 null에러처리
         finish();
+        else{
+            dao.deleteNote(tmp);
+            finish();
+        }
     }
 
     void showdial() {
@@ -306,6 +340,7 @@ public class EditNoteActivity extends AppCompatActivity {
         final CharSequence[] items = ListItems.toArray(new String[ListItems.size()]);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("이미지를 추가하거나 삭제할 수 있습니다");
+        builder.setCancelable(false); //다이얼 클릭시 무조건 기능을 수행하게만들었습니다 .
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int pos) {
                 if (pos == 0) //갤러리
@@ -346,14 +381,26 @@ public class EditNoteActivity extends AppCompatActivity {
             imageView.setImageResource(R.drawable.glideerror);
             glidecheck=false;
             otherimg=true;
-            if(imageclickcheck2){
+            if(imageclickcheck2 &&twist2){
                 delete2=true;
-            }if(imageclickcheck3){
+                img2.setImageResource(R.drawable.glideerror);
+                twist2=false;
+            }if(imageclickcheck3 &&twist3){
                 delete3=true;
-            }if(imageclickcheck4)
+                img3.setImageResource(R.drawable.glideerror);
+                twist3=false;
+            }if(imageclickcheck4 &&twist4){
                 delete4=true;
-            if(imageclickcheck5)
+                img4.setImageResource(R.drawable.glideerror);
+                twist4=false;
+            }
+            if(imageclickcheck5 &&twist5){
                 delete5=true;
+                img5.setImageResource(R.drawable.glideerror);
+                twist5=false;
+
+            }
+
 
            // Log.v("저거?","저거?");
         }
@@ -380,15 +427,29 @@ public class EditNoteActivity extends AppCompatActivity {
                                 }
                                 else{
                                     otherimg=true;
-                                    imageView.setImageBitmap(resource);
-                                    if(imageclickcheck2)
+                                   // imageView.setImageBitmap(resource);
+                                    if(imageclickcheck2 &&twist2)
+                                    {
+                                        img2.setImageBitmap(resource);
                                         bitmapgrid2=((BitmapDrawable)imageView.getDrawable()).getBitmap();
-                                    if(imageclickcheck3)
+                                        twist2=false;
+                                    }
+                                    if(imageclickcheck3 &&twist3){
+                                        img3.setImageBitmap(resource);
                                         bitmapgrid3=((BitmapDrawable)imageView.getDrawable()).getBitmap();
-                                    if(imageclickcheck4)
-                                        bitmapgrid4=((BitmapDrawable)imageView.getDrawable()).getBitmap();
-                                    if(imageclickcheck5)
+                                        twist3=false;
+                                    }
+                                    if(imageclickcheck4 &&twist4) {
+                                        img4.setImageBitmap(resource);
+                                        bitmapgrid4 = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+                                        twist4=false;
+                                    }
+                                    if(imageclickcheck5 &&twist5){
+                                        img5.setImageBitmap(resource);
                                         bitmapgrid5=((BitmapDrawable)imageView.getDrawable()).getBitmap();
+                                        twist5=false;
+                                    }
+
                                 }
                             }
                             @Override
@@ -403,6 +464,7 @@ public class EditNoteActivity extends AppCompatActivity {
                             public void onLoadFailed(@Nullable Drawable errorDrawable) {
                                 glidecheck=false;
                                 Toast.makeText(EditNoteActivity.this, "존재하지 않는 URL이거나 맞지않는 확장자입니다.", Toast.LENGTH_SHORT).show();
+                                /*
                                 if(thumbnailclick){
                                     imgthumb.setImageResource(R.drawable.glideerror);
                                     thumbnailclick =false;
@@ -412,6 +474,8 @@ public class EditNoteActivity extends AppCompatActivity {
                                     imageView.setImageResource(R.drawable.glideerror);
 
                                 }
+
+                                 */
                             }
                         });
 
@@ -508,7 +572,29 @@ public class EditNoteActivity extends AppCompatActivity {
                //bitmap= Bitmap.createScaledBitmap(bitmap,400,400,true);
             }
             else{
-                imageView.setImageBitmap(rotate(bitmap2, exifDegree));
+               if(imageclickcheck2 &&twist2){
+                   img2.setImageBitmap(rotate(bitmap2, exifDegree));
+                   bitmapgrid2=((BitmapDrawable)img2.getDrawable()).getBitmap();
+                    twist2=false;
+               }
+               if(imageclickcheck3 &&twist3){
+                   img3.setImageBitmap(rotate(bitmap2, exifDegree));
+                   bitmapgrid3=((BitmapDrawable)img3.getDrawable()).getBitmap();
+                   twist3=false;
+
+               }
+               if(imageclickcheck4 &&twist4){
+                   img4.setImageBitmap(rotate(bitmap2, exifDegree));
+                   bitmapgrid4=((BitmapDrawable)img4.getDrawable()).getBitmap();
+                   twist4=false;
+
+               }
+               if(imageclickcheck5 &&twist5){
+                   img5.setImageBitmap(rotate(bitmap2, exifDegree));
+                   bitmapgrid5=((BitmapDrawable)img5.getDrawable()).getBitmap();
+                   twist5=false;
+
+               }
                 otherimg=true;
             }
         }
@@ -524,21 +610,33 @@ public class EditNoteActivity extends AppCompatActivity {
             otherimg=false;
         }
         else{
-            imageView.setImageBitmap(originalBm);
+           // imageView.setImageBitmap(originalBm);
             otherimg=true;
-            if(imageclickcheck2){
-                bitmapgrid2=((BitmapDrawable)imageView.getDrawable()).getBitmap();
+            if(imageclickcheck2 &&twist2) {
+                img2.setImageBitmap(originalBm);
+                bitmapgrid2=((BitmapDrawable)img2.getDrawable()).getBitmap();
                 bitmapgrid2=Bitmap.createScaledBitmap(bitmapgrid2,400,400,true);
+                twist2=false;
+               // Log.v("두번째 갤러리","갤러리2");
             }
-            if(imageclickcheck3){
-                bitmapgrid3=((BitmapDrawable)imageView.getDrawable()).getBitmap();
+            if(imageclickcheck3 &&twist3){
+                img3.setImageBitmap(originalBm);
+                bitmapgrid3=((BitmapDrawable)img3.getDrawable()).getBitmap();
                 bitmapgrid3=Bitmap.createScaledBitmap(bitmapgrid3,400,400,true);
-            }if(imageclickcheck4){
-                bitmapgrid4=((BitmapDrawable)imageView.getDrawable()).getBitmap();
+                twist3=false;
+              //  Log.v("두번째 갤러리","갤러리3");
+            }if(imageclickcheck4 &&twist4){
+                img4.setImageBitmap(originalBm);
+                bitmapgrid4=((BitmapDrawable)img4.getDrawable()).getBitmap();
                 bitmapgrid4=Bitmap.createScaledBitmap(bitmapgrid4,400,400,true);
-            }if(imageclickcheck5){
-                bitmapgrid5=((BitmapDrawable)imageView.getDrawable()).getBitmap();
+                twist4=false;
+             //  Log.v("두번째 갤러리","갤러리4");
+            }if(imageclickcheck5 &&twist5){
+                img5.setImageBitmap(originalBm);
+                bitmapgrid5=((BitmapDrawable)img5.getDrawable()).getBitmap();
                 bitmapgrid5=Bitmap.createScaledBitmap(bitmapgrid5,400,400,true);
+                twist5=false;  //이미지 같이변경되는것 방지
+              //  Log.v("두번째 갤러리","갤러리5");
             }
         }
         file = null;
