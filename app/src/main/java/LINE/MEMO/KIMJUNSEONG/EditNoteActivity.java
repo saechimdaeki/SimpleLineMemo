@@ -607,6 +607,8 @@ public class EditNoteActivity extends AppCompatActivity {
         bitmap2.copyPixelsToBuffer(buffer2);
         return Arrays.equals(buffer1.array(), buffer2.array());
     }
+
+    /* oncreate()시 저장되어있던 이미지들을 불러와서 그리드뷰에 넣음  */
     public class ImageAdapterGridView extends BaseAdapter {
         private Context mContext;
         public ImageAdapterGridView(Context c) {
