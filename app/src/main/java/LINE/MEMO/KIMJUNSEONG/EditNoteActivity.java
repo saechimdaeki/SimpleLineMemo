@@ -42,7 +42,9 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -513,8 +515,10 @@ public class EditNoteActivity extends AppCompatActivity {
     }
 
     private void ALBUM() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        //intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
         startActivityForResult(intent, gallery);
     }
 
@@ -536,21 +540,18 @@ public class EditNoteActivity extends AppCompatActivity {
         }else if(requestCode==Activity.RESULT_OK)
             glidecheck=true;
         if (requestCode == gallery) {
+            /*
+            //////고 해상도의 기기에서 오류가있음
             Uri photoUri = data.getData();
             Cursor cursor = null;
-            Log.v("여긴가","여긴가1");
             try {
+
                 String[] proj = {MediaStore.Images.Media.DATA};
                 assert photoUri != null;
-                Log.v("여긴가","여긴가2");
                 cursor = getContentResolver().query(photoUri, proj, null, null, null);
-                Log.v("여긴가","여긴가3");
                 assert cursor != null;
-                Log.v("여긴가","여긴가4");
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                Log.v("여긴가","여긴가5");
                 cursor.moveToFirst();
-                Log.v("여긴가","여긴가6");
                 file = new File(cursor.getString(column_index));
                 Log.v("여긴가","여긴가7");
             } finally {
@@ -560,7 +561,56 @@ public class EditNoteActivity extends AppCompatActivity {
                     Log.v("여긴가","여긴가9");
                 }
             }
-            setImage();
+
+             */
+            /// 고해상도의 기기에도 문제해결
+            try{
+                InputStream in = getContentResolver().openInputStream(data.getData());
+                Bitmap img = BitmapFactory.decodeStream(in);
+                if(thumbnailclick && !otherimg){
+                  //  Log.v("여긴가1","여기가1");
+                    imgthumb.setImageBitmap(img);
+                  //  Log.v("여기가2","여기가2");
+                    bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
+                 //   Log.v("여기가2","여기가3");
+                    bitmap= Bitmap.createScaledBitmap(bitmap,300,300,true);
+                //    Log.v("여기가2","여기가4");
+                    glidecheck=true;
+                    otherimg=false;
+                }else{
+
+                    otherimg=true;
+                    if(imageclickcheck2 &&twist2) {
+                        img2.setImageBitmap(img);
+                        bitmapgrid2=((BitmapDrawable)img2.getDrawable()).getBitmap();
+                        bitmapgrid2=Bitmap.createScaledBitmap(bitmapgrid2,400,400,true);
+                        twist2=false;
+                        // Log.v("두번째 갤러리","갤러리2");
+                    }
+                    if(imageclickcheck3 &&twist3){
+                        img3.setImageBitmap(img);
+                        bitmapgrid3=((BitmapDrawable)img3.getDrawable()).getBitmap();
+                        bitmapgrid3=Bitmap.createScaledBitmap(bitmapgrid3,400,400,true);
+                        twist3=false;
+                        //  Log.v("두번째 갤러리","갤러리3");
+                    }if(imageclickcheck4 &&twist4){
+                        img4.setImageBitmap(img);
+                        bitmapgrid4=((BitmapDrawable)img4.getDrawable()).getBitmap();
+                        bitmapgrid4=Bitmap.createScaledBitmap(bitmapgrid4,400,400,true);
+                        twist4=false;
+                        //  Log.v("두번째 갤러리","갤러리4");
+                    }if(imageclickcheck5 &&twist5){
+                        img5.setImageBitmap(img);
+                        bitmapgrid5=((BitmapDrawable)img5.getDrawable()).getBitmap();
+                        bitmapgrid5=Bitmap.createScaledBitmap(bitmapgrid5,400,400,true);
+                        twist5=false;  //이미지 같이변경되는것 방지
+                        //  Log.v("두번째 갤러리","갤러리5");
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
         } else if (requestCode == CAMERA) {
             Bitmap bitmap2 = BitmapFactory.decodeFile(imageFilePath);
             ExifInterface exif = null;
@@ -613,6 +663,7 @@ public class EditNoteActivity extends AppCompatActivity {
             }
         }
     }
+    /*  직접갤러리로가는것
     private void setImage() {
         BitmapFactory.Options options = new BitmapFactory.Options();
        // options.inJustDecodeBounds=true;
@@ -663,6 +714,8 @@ public class EditNoteActivity extends AppCompatActivity {
         file = null;
     }
 
+
+     */
     private void sendTakePhotoIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
