@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -84,9 +85,11 @@ public class EditNoteActivity extends AppCompatActivity {
     private Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,
             R.drawable.test4, R.drawable.test5
     };
+    private boolean dialogdismiss=true;
     Boolean imageclickcheck2=false,imageclickcheck3=false,imageclickcheck4=false,imageclickcheck5=false;/////그리드뷰 이미지가 클릭되었는지
     boolean dbcheck=true; //썸네일db와 그리드 첫번째 db비교
     boolean dbcheckgrid2=true,dbcheckgrid3=true,dbcheckgrid4=true,dbcheckgrid5=true; //나머지 비교
+    Drawable plusDrawable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +98,7 @@ public class EditNoteActivity extends AppCompatActivity {
         inputNote = findViewById(R.id.input_note);
         inputbody = findViewById(R.id.input_note_body);
         thumbnailclick =false;
+        plusDrawable=getResources().getDrawable(R.drawable.glideerror);
         dao = NotesDB.getInstance(this).notesDao();
         if (getIntent().getExtras() != null) {
             int id = getIntent().getExtras().getInt(NOTE_EXTRA_KEY, 0);
@@ -108,8 +112,7 @@ public class EditNoteActivity extends AppCompatActivity {
             bitmapgrid5=byteToBitmap(tmp.getGridimage5());
             Drawable drawable=getResources().getDrawable(R.drawable.ic_check_box_outline_blank_black_24dp);
             Bitmap bitmapcmp=getBitmap((VectorDrawable) drawable);
-            Drawable drawableother=getResources().getDrawable(R.drawable.glideerror);
-            Bitmap bitmapcmpother=getBitmap((VectorDrawable) drawableother);
+            Bitmap bitmapcmpother=getBitmap((VectorDrawable) plusDrawable);
             ///다르면 썸네일 이미지를 그대로 가져옴
             dbcheck= sameAs(bitmapthumb, bitmapcmp);  //같아도 + gridview가 나오게끔 표시
             dbcheckgrid2=sameAs(bitmapgrid2,bitmapcmpother);
@@ -188,10 +191,10 @@ public class EditNoteActivity extends AppCompatActivity {
     private void onSaveNote() {
         String text = inputNote.getText().toString();
         String textbody = inputbody.getText().toString();
-        if(thumbnailclick && glidecheck)///여기선 otherimg가 필요가없습니다.
+        if(thumbnailclick && glidecheck &&!dialogdismiss)///여기선 otherimg가 필요없지만 dialog창밖을 클릭하거나 dismiss할경우 체크를해주는 변수필요.
         {
             image=BitmapManager.bitmapToByte(bitmap);
-           // Log.v("체크지점1","체크지점1");
+            Log.v("체크지점1","체크지점1");
         }
         else if(!dbcheck)     ////,예외적으로 db체크가 false일시에 다시 editnote들어온다음에 저장하여도 사진이남게끔
         {
@@ -203,20 +206,20 @@ public class EditNoteActivity extends AppCompatActivity {
             }else
             image=BitmapManager.bitmapToByte(bitmapthumb);
           // image= BitmapManager.bitmapToByte(getBitmap((BitmapDrawable) drawable));
-          //  Log.v("체크지점2","체크지점2");
+            Log.v("체크지점2","체크지점2");
         }
         else
         {
             Drawable drawable=getResources().getDrawable(R.drawable.ic_check_box_outline_blank_black_24dp);
             bitmap=getBitmap((VectorDrawable) drawable);
             image=BitmapManager.bitmapToByte(bitmap);
-           // Log.v("체크지점3","체크지점3");
+            Log.v("체크지점3","체크지점3");
         }
         /*  썸네일 아닌 나머지   */
         if(!imageclickcheck2)   //두번째 이미지 클릭안했을때
         {
-            Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
-            bitmap=getBitmap((VectorDrawable) drawable);
+           // Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
+            bitmap=getBitmap((VectorDrawable) plusDrawable);
             imagegrid2=BitmapManager.bitmapToByte(bitmap);
 
             if(!dbcheckgrid2){  ///이미지 클릭안했고 기존에 이미지 가지고 있었을때
@@ -226,8 +229,8 @@ public class EditNoteActivity extends AppCompatActivity {
         }else{  ///클릭했을때
             if(delete2) ///삭제했을때
             {
-                Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
-                bitmap=getBitmap((VectorDrawable) drawable);
+               // Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
+                bitmap=getBitmap((VectorDrawable) plusDrawable);
                 imagegrid2=BitmapManager.bitmapToByte(bitmap);
             }else
                 imagegrid2=BitmapManager.bitmapToByte(bitmapgrid2);
@@ -243,8 +246,8 @@ public class EditNoteActivity extends AppCompatActivity {
                 String string=new String(imagegrid3);
                 Log.v("세번째 저장테스트","세번째저장테스트1"+string);
             }else{
-                Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
-                bitmap=getBitmap((VectorDrawable) drawable);
+              //  Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
+                bitmap=getBitmap((VectorDrawable) plusDrawable);
                 imagegrid3=BitmapManager.bitmapToByte(bitmap);
                 String string=new String(imagegrid3);
                 Log.v("세번째 저장테스트","세번째저장테스트2"+string);
@@ -253,8 +256,8 @@ public class EditNoteActivity extends AppCompatActivity {
             }
         }else{
             if(delete3){
-                Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
-                bitmap=getBitmap((VectorDrawable) drawable);
+                //Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
+                bitmap=getBitmap((VectorDrawable) plusDrawable);
                 imagegrid3=BitmapManager.bitmapToByte(bitmap);
                 String string=new String(imagegrid3);
                 Log.v("세번째 저장테스트","세번째저장테스트1"+string);;
@@ -269,24 +272,24 @@ public class EditNoteActivity extends AppCompatActivity {
         }
 
         if(!imageclickcheck4){
-            Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
-            bitmap=getBitmap((VectorDrawable) drawable);
+          //  Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
+            bitmap=getBitmap((VectorDrawable) plusDrawable);
             imagegrid4=BitmapManager.bitmapToByte(bitmap);
             if(!dbcheckgrid4){
                 imagegrid4=BitmapManager.bitmapToByte(bitmapgrid4);
             }
         }else{
             if(delete4){
-                Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
-                bitmap=getBitmap((VectorDrawable) drawable);
+               // Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
+                bitmap=getBitmap((VectorDrawable) plusDrawable);
                 imagegrid4=BitmapManager.bitmapToByte(bitmap);
             }
             else
                 imagegrid4=BitmapManager.bitmapToByte(bitmapgrid4);
         }
         if(!imageclickcheck5){
-            Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
-            bitmap=getBitmap((VectorDrawable) drawable);
+           // Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
+            bitmap=getBitmap((VectorDrawable) plusDrawable);
             imagegrid5=BitmapManager.bitmapToByte(bitmap);
             if(!dbcheckgrid5){
                 imagegrid5=BitmapManager.bitmapToByte(bitmapgrid5);
@@ -294,8 +297,8 @@ public class EditNoteActivity extends AppCompatActivity {
         }else
         {
             if(delete5){
-                Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
-                bitmap=getBitmap((VectorDrawable) drawable);
+               // Drawable drawable=getResources().getDrawable(R.drawable.glideerror);
+                bitmap=getBitmap((VectorDrawable) plusDrawable);
                 imagegrid5=BitmapManager.bitmapToByte(bitmap);
             }
             else
@@ -340,13 +343,14 @@ public class EditNoteActivity extends AppCompatActivity {
         final CharSequence[] items = ListItems.toArray(new String[ListItems.size()]);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("이미지를 추가하거나 삭제할 수 있습니다");
-        builder.setCancelable(false); //다이얼 클릭시 무조건 기능을 수행하게만들었습니다 .
+       // builder.setCancelable(false); //다이얼 클릭시 무조건 기능을 수행하게만들었습니다 .
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int pos) {
                 if (pos == 0) //갤러리
                 {
                     if (permission) {
                         ALBUM();
+                        dialogdismiss=false;
                     } else {
                         Toast.makeText(EditNoteActivity.this, "갤러리 접근 및 사진 촬영을위해 권한이 필요합니다", Toast.LENGTH_SHORT).show();
                     }
@@ -354,6 +358,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 {
                     if (permission) {
                         sendTakePhotoIntent();
+                        dialogdismiss=false;
                     } else {
                         Toast.makeText(EditNoteActivity.this, "갤러리 접근 및 사진 촬영을위해 권한이 필요합니다", Toast.LENGTH_SHORT).show();
                     }
@@ -361,11 +366,14 @@ public class EditNoteActivity extends AppCompatActivity {
                 {
                     if (permission) {
                         inserturl();
+                        dialogdismiss=false;
                     } else {
                         Toast.makeText(EditNoteActivity.this, "권한을 허용해주세요", Toast.LENGTH_SHORT).show();
                     }
                 }else if(pos==3){
                     deletephoto();
+                }else{
+                    dialogdismiss=true;
                 }
             }
         });
@@ -398,10 +406,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 delete5=true;
                 img5.setImageResource(R.drawable.glideerror);
                 twist5=false;
-
             }
-
-
            // Log.v("저거?","저거?");
         }
     }
@@ -533,17 +538,26 @@ public class EditNoteActivity extends AppCompatActivity {
         if (requestCode == gallery) {
             Uri photoUri = data.getData();
             Cursor cursor = null;
+            Log.v("여긴가","여긴가1");
             try {
                 String[] proj = {MediaStore.Images.Media.DATA};
                 assert photoUri != null;
+                Log.v("여긴가","여긴가2");
                 cursor = getContentResolver().query(photoUri, proj, null, null, null);
+                Log.v("여긴가","여긴가3");
                 assert cursor != null;
+                Log.v("여긴가","여긴가4");
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                Log.v("여긴가","여긴가5");
                 cursor.moveToFirst();
+                Log.v("여긴가","여긴가6");
                 file = new File(cursor.getString(column_index));
+                Log.v("여긴가","여긴가7");
             } finally {
                 if (cursor != null) {
+                    Log.v("여긴가","여긴가8");
                     cursor.close();
+                    Log.v("여긴가","여긴가9");
                 }
             }
             setImage();
@@ -601,11 +615,18 @@ public class EditNoteActivity extends AppCompatActivity {
     }
     private void setImage() {
         BitmapFactory.Options options = new BitmapFactory.Options();
+       // options.inJustDecodeBounds=true;
+        Log.v("요기?","요기?");
         Bitmap originalBm = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+        Log.v("요기?","요기2?");
         if(thumbnailclick && !otherimg){
+            Log.v("여긴가1","여기가1");
             imgthumb.setImageBitmap(originalBm);
+            Log.v("여기가2","여기가2");
             bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
-            bitmap= Bitmap.createScaledBitmap(bitmap,400,400,true);
+            Log.v("여기가2","여기가3");
+            bitmap= Bitmap.createScaledBitmap(bitmap,300,300,true);
+            Log.v("여기가2","여기가4");
             glidecheck=true;
             otherimg=false;
         }
@@ -782,6 +803,43 @@ public class EditNoteActivity extends AppCompatActivity {
 
             return mImageView;
         }
+    }
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+                                                         int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
     }
 
 

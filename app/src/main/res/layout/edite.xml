@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+
 >
 
     <com.google.android.material.textfield.TextInputLayout
@@ -55,22 +56,31 @@
             />
 
     </com.google.android.material.textfield.TextInputLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="---이미지 첨부란 입니다 이미지는 최대 5개로 설정하였습니다---"
-        android:textSize="15sp"
-        />
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/gridView01"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="15"
-        android:columnWidth="100dp"
-        android:numColumns="5"
-        android:verticalSpacing="5dp"
-        android:horizontalSpacing="10dp"
-        android:gravity="center"/>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_weight="0.5"
+        android:background="#B2DFDB"
+        android:orientation="vertical">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="---이미지 첨부란 입니다. 이미지는 최대 5개로 설정하였습니다---"
+            android:textSize="15sp" />
+
+        <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/gridView01"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="15"
+            android:columnWidth="150dp"
+            android:gravity="center"
+            android:horizontalSpacing="10dp"
+            android:numColumns="5"
+
+            android:verticalSpacing="5dp" />
+
+    </LinearLayout>
 </LinearLayout>
