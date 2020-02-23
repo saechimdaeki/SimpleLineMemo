@@ -68,7 +68,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="---이미지 첨부란 입니다. 이미지는 최대 5개로 설정하였습니다---"
-            android:textSize="15sp" />
+            android:textAlignment="center"
+            android:textSize="12sp" />
 
         <GridView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/gridView01"
