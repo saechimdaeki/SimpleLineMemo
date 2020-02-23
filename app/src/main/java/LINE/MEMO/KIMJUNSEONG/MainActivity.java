@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements NoteEventListener
     }
     private void swipeToDelete(final Note swipedNote, final RecyclerView.ViewHolder viewHolder) {
         new AlertDialog.Builder(MainActivity.this)
-                .setMessage("지울까요?")
+                .setMessage("해당 메모를 지울까요?")
                 .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
