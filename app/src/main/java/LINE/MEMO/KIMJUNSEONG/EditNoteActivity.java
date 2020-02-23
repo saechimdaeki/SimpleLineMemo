@@ -84,7 +84,6 @@ public class EditNoteActivity extends AppCompatActivity {
     private Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,
             R.drawable.test4, R.drawable.test5
     };
-    private boolean dialogdismiss = true; //dialog취소시 값이유지되게하기위함.
     Boolean imageclickcheck2 = false, imageclickcheck3 = false, imageclickcheck4 = false, imageclickcheck5 = false;/////그리드뷰 이미지가 클릭되었는지
     boolean dbcheck = true; //썸네일db와 그리드 첫번째 db비교
     boolean dbcheckgrid2 = true, dbcheckgrid3 = true, dbcheckgrid4 = true, dbcheckgrid5 = true; //나머지 비교 (그대로 가지고 올지  putextra, getextra대신 boolean으로 진행 )
@@ -340,7 +339,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 } else if (pos == 3) {
                     deletephoto();
                 } else {
-                    dialogdismiss = true;   //이렇게할지말지 고민인
+ //                   dialogdismiss = true;  고민.
                 }
             }
         });
@@ -461,31 +460,29 @@ public class EditNoteActivity extends AppCompatActivity {
         vectorDrawable.draw(canvas);
         return bitmap;
     }
-
-
-
     private void ALBUM() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_PICK); //모든이미지 대신 gallery로 접근
         startActivityForResult(intent, gallery);
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != Activity.RESULT_OK) {
+        if (resultCode != Activity.RESULT_OK) {   //// dialog는 handle했지만 사진촬영, 갤러리, url입력창에서 취소할경우를 다루는 곳
             Toast.makeText(this, "취소 되었습니다.", Toast.LENGTH_SHORT).show();
             glidecheck = false;
             otherimg = true;
-            if(imageclickcheck2)
-                imageclickcheck2=false;
-            else if(imageclickcheck3)
-                imageclickcheck3=false;
-            else if(imageclickcheck4)
-                imageclickcheck4=false;
-            else if(imageclickcheck5)
-                imageclickcheck5=false;
+            if(thumbnailclick)
+                thumbnailclick=false;
+            else if (imageclickcheck2)
+                imageclickcheck2 = false;
+            else if (imageclickcheck3)
+                imageclickcheck3 = false;
+            else if (imageclickcheck4)
+                imageclickcheck4 = false;
+            else if (imageclickcheck5)
+                imageclickcheck5 = false;
             return;
         } else if (requestCode == Activity.RESULT_OK)
             glidecheck = true;
@@ -530,146 +527,55 @@ public class EditNoteActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-        } else if (requestCode == CAMERA &&data.hasExtra("data")) {
-            Bitmap bitmap2=(Bitmap) data.getExtras().get("data");
-            if(bitmap2!=null){
-                if (thumbnailclick && !otherimg ){
+        } else if (requestCode == CAMERA && data.hasExtra("data")) {
+            Bitmap bitmap2 = (Bitmap) data.getExtras().get("data");
+            if (bitmap2 != null) {
+                if (thumbnailclick && !otherimg) {
                     imgthumb.setImageBitmap(bitmap2);
-                    bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
-                    bitmap= Bitmap.createScaledBitmap(bitmap,400,400,true);
-                    otherimg=false;
+                    bitmap = ((BitmapDrawable) imgthumb.getDrawable()).getBitmap();
+                    bitmap = Bitmap.createScaledBitmap(bitmap, 400, 400, true);
+                    otherimg = false;
                     //bitmap= Bitmap.createScaledBitmap(bitmap,400,400,true);
-                }
-                else{
-                    if(imageclickcheck2 &&twist2){
+                } else {
+                    if (imageclickcheck2 && twist2) {
                         img2.setImageBitmap(bitmap2);
-                        bitmapgrid2=((BitmapDrawable)img2.getDrawable()).getBitmap();
-                        bitmapgrid2= Bitmap.createScaledBitmap(bitmapgrid2,400,400,true);
-                        twist2=false;
+                        bitmapgrid2 = ((BitmapDrawable) img2.getDrawable()).getBitmap();
+                        bitmapgrid2 = Bitmap.createScaledBitmap(bitmapgrid2, 400, 400, true);
+                        twist2 = false;
                     }
-                    if(imageclickcheck3 &&twist3){
+                    if (imageclickcheck3 && twist3) {
                         img3.setImageBitmap(bitmap2);
-                        bitmapgrid3=((BitmapDrawable)img3.getDrawable()).getBitmap();
-                        bitmapgrid3= Bitmap.createScaledBitmap(bitmapgrid3,400,400,true);
+                        bitmapgrid3 = ((BitmapDrawable) img3.getDrawable()).getBitmap();
+                        bitmapgrid3 = Bitmap.createScaledBitmap(bitmapgrid3, 400, 400, true);
 
-                        twist3=false;
+                        twist3 = false;
 
                     }
-                    if(imageclickcheck4 &&twist4){
+                    if (imageclickcheck4 && twist4) {
                         img4.setImageBitmap(bitmap2);
-                        bitmapgrid4=((BitmapDrawable)img4.getDrawable()).getBitmap();
-                        bitmapgrid4= Bitmap.createScaledBitmap(bitmapgrid4,400,400,true);
+                        bitmapgrid4 = ((BitmapDrawable) img4.getDrawable()).getBitmap();
+                        bitmapgrid4 = Bitmap.createScaledBitmap(bitmapgrid4, 400, 400, true);
 
-                        twist4=false;
+                        twist4 = false;
 
                     }
-                    if(imageclickcheck5 &&twist5){
+                    if (imageclickcheck5 && twist5) {
                         img5.setImageBitmap(bitmap2);
-                        bitmapgrid5=((BitmapDrawable)img5.getDrawable()).getBitmap();
-                        bitmapgrid5= Bitmap.createScaledBitmap(bitmapgrid5,400,400,true);
+                        bitmapgrid5 = ((BitmapDrawable) img5.getDrawable()).getBitmap();
+                        bitmapgrid5 = Bitmap.createScaledBitmap(bitmapgrid5, 400, 400, true);
 
-                        twist5=false;
+                        twist5 = false;
 
                     }
-                    otherimg=true;
+                    otherimg = true;
                 }
             }
-
-
+        }
 
     }
-
-
-
-    /*  직접갤러리로가는것
-    private void setImage() {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-       // options.inJustDecodeBounds=true;
-        Log.v("요기?","요기?");
-        Bitmap originalBm = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-        Log.v("요기?","요기2?");
-        if(thumbnailclick && !otherimg){
-            Log.v("여긴가1","여기가1");
-            imgthumb.setImageBitmap(originalBm);
-            Log.v("여기가2","여기가2");
-            bitmap=((BitmapDrawable)imgthumb.getDrawable()).getBitmap();
-            Log.v("여기가2","여기가3");
-            bitmap= Bitmap.createScaledBitmap(bitmap,300,300,true);
-            Log.v("여기가2","여기가4");
-            glidecheck=true;
-            otherimg=false;
-        }
-        else{
-           // imageView.setImageBitmap(originalBm);
-            otherimg=true;
-            if(imageclickcheck2 &&twist2) {
-                img2.setImageBitmap(originalBm);
-                bitmapgrid2=((BitmapDrawable)img2.getDrawable()).getBitmap();
-                bitmapgrid2=Bitmap.createScaledBitmap(bitmapgrid2,400,400,true);
-                twist2=false;
-               // Log.v("두번째 갤러리","갤러리2");
-            }
-            if(imageclickcheck3 &&twist3){
-                img3.setImageBitmap(originalBm);
-                bitmapgrid3=((BitmapDrawable)img3.getDrawable()).getBitmap();
-                bitmapgrid3=Bitmap.createScaledBitmap(bitmapgrid3,400,400,true);
-                twist3=false;
-              //  Log.v("두번째 갤러리","갤러리3");
-            }if(imageclickcheck4 &&twist4){
-                img4.setImageBitmap(originalBm);
-                bitmapgrid4=((BitmapDrawable)img4.getDrawable()).getBitmap();
-                bitmapgrid4=Bitmap.createScaledBitmap(bitmapgrid4,400,400,true);
-                twist4=false;
-             //  Log.v("두번째 갤러리","갤러리4");
-            }if(imageclickcheck5 &&twist5){
-                img5.setImageBitmap(originalBm);
-                bitmapgrid5=((BitmapDrawable)img5.getDrawable()).getBitmap();
-                bitmapgrid5=Bitmap.createScaledBitmap(bitmapgrid5,400,400,true);
-                twist5=false;  //이미지 같이변경되는것 방지
-              //  Log.v("두번째 갤러리","갤러리5");
-            }
-        }
-        file = null;
-    }
-     */
-}
     private void sendTakePhotoIntent() {
-    /*
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                Toast.makeText(this, "파일 생성에 실패하였습니다 kjs", Toast.LENGTH_SHORT).show();
-            }
-
-            if (photoFile != null) {
-                photoUri = FileProvider.getUriForFile(this, getPackageName(), photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(takePictureIntent, CAMERA);
-            }
-        }
-     */
         camera=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(camera,CAMERA);
-    }
-
-    private int exifOrientationToDegrees(int exifOrientation) {
-        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
-            return 90;
-        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
-            return 180;
-        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
-            return 270;
-        }
-        return 0;
-    }
-
-    private Bitmap rotate(Bitmap bitmap, float degree) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degree);
-        return Bitmap.createScaledBitmap(bitmap,400,400,true);
     }
     @Override   /////상태저장
     protected void onSaveInstanceState(Bundle outState) {
@@ -679,15 +585,6 @@ public class EditNoteActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-
-    }
-    private static Bitmap getBitmap(VectorDrawableCompat vectorDrawable) {
-        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
-                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        vectorDrawable.draw(canvas);
-        return bitmap;
     }
     private static Bitmap getBitmap(VectorDrawable vectorDrawable) {
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
@@ -706,33 +603,26 @@ public class EditNoteActivity extends AppCompatActivity {
     private boolean sameAs(Bitmap bitmap1, Bitmap bitmap2) {
         ByteBuffer buffer1 = ByteBuffer.allocate(bitmap1.getHeight() * bitmap1.getRowBytes());
         bitmap1.copyPixelsToBuffer(buffer1);
-
         ByteBuffer buffer2 = ByteBuffer.allocate(bitmap2.getHeight() * bitmap2.getRowBytes());
         bitmap2.copyPixelsToBuffer(buffer2);
         return Arrays.equals(buffer1.array(), buffer2.array());
     }
     public class ImageAdapterGridView extends BaseAdapter {
         private Context mContext;
-
         public ImageAdapterGridView(Context c) {
             mContext = c;
         }
-
-        public int getCount() {
+       public int getCount() {
             return mThumblds.length;
         }
-
         public Object getItem(int position) {
             return null;
         }
-
         public long getItemId(int position) {
             return 0;
         }
-
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView mImageView;
-
             if (convertView == null) {
                 mImageView = new ImageView(mContext);
                 mImageView.setLayoutParams(new GridView.LayoutParams(200, 200));
