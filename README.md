@@ -29,13 +29,6 @@
 </details>
 
 
-## Each note can be swapped to the left and right to delete.
-
-<details>
-<summary>See Features for yourself</summary>
-<img src=https://user-images.githubusercontent.com/40031858/75109248-0abc0000-5665-11ea-9158-13f03bd6e3ca.png width=400px>
-
-</details>
 
 ## You can take a url or gallery or picture yourself and put it in a note
 
