@@ -201,7 +201,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 if(imageclickcheck2 ||!dbcheckgrid2){  //첫번째가아닌 다른칸에 있을경우도 썸네일 고려했어야함  중요.....::::::::     (LINEPLUS탈락이유)
                     image=BitmapManager.bitmapToByte(bitmapgrid2);
                     imageclickcheck2=false;
-                    dbcheckgrid2=true;  ///삭제했을때 남아있게끔 copycat이아닌 방식으로 
+                    dbcheckgrid2=true;  ///삭제했을때 남아있게끔 copycat이아닌 방식으로
                 }else if(imageclickcheck3 ||!dbcheckgrid3){
                     image=BitmapManager.bitmapToByte(bitmapgrid3);
                     imageclickcheck3=false;
