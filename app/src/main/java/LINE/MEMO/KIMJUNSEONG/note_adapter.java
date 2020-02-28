@@ -2,6 +2,7 @@ package LINE.MEMO.KIMJUNSEONG;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +19,11 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
     public Context context;
     public ArrayList<Note> notelist;
     private NoteEventListener listener;
-    boolean check=EditNoteActivity.thumbnailclick;
-
+    boolean  check=EditNoteActivity.thumbnailclick;;
+    boolean check2=EditNoteActivity.imageclickcheck2;
+    boolean check3=EditNoteActivity.imageclickcheck3;
+    boolean check4=EditNoteActivity.imageclickcheck4;
+    boolean check5=EditNoteActivity.imageclickcheck5;
     public note_adapter(Context context, ArrayList<Note> notelist) {
         this.notelist = notelist;
         this.context = context;
@@ -93,9 +97,6 @@ public class note_adapter extends RecyclerView.Adapter<note_adapter.noteholder> 
             notetext = itemView.findViewById(R.id.note);
             notebody = itemView.findViewById(R.id.note_body);
             thumbnail = itemView.findViewById(R.id.thumbnail_note);
-
-
-
         }
     }
 }

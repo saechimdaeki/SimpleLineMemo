@@ -84,7 +84,7 @@ public class EditNoteActivity extends AppCompatActivity {
     private Integer[] mThumblds = {R.drawable.test1, R.drawable.test2, R.drawable.test3,
             R.drawable.test4, R.drawable.test5
     };
-    Boolean imageclickcheck2 = false, imageclickcheck3 = false, imageclickcheck4 = false, imageclickcheck5 = false;/////그리드뷰 이미지가 클릭되었는지
+    public static Boolean imageclickcheck2 = false, imageclickcheck3 = false, imageclickcheck4 = false, imageclickcheck5 = false;/////그리드뷰 이미지가 클릭되었는지
     boolean dbcheck = true; //썸네일db와 그리드 첫번째 db비교
     boolean dbcheckgrid2 = true, dbcheckgrid3 = true, dbcheckgrid4 = true, dbcheckgrid5 = true; //나머지 비교 (그대로 가지고 올지  putextra, getextra대신 boolean으로 진행 )
     Drawable plusDrawable;   //  For compare
@@ -197,14 +197,43 @@ public class EditNoteActivity extends AppCompatActivity {
             if (deletethumbnail) {
                 Drawable drawable = getResources().getDrawable(R.drawable.ic_check_box_outline_blank_black_24dp);
                 bitmap = getBitmap((VectorDrawable) drawable);
-                image = BitmapManager.bitmapToByte(bitmap);    //썸네일 삭제하였을때 리사이클러뷰에서 썸네일이 삭제되게끔
+                image = BitmapManager.bitmapToByte(bitmap);   //썸네일 삭제하였을때 리사이클러뷰에서 썸네일이 삭제되게끔
+                if(imageclickcheck2 ||!dbcheckgrid2){  //첫번째가아닌 다른칸에 있을경우도 썸네일 고려했어야함  중요.....::::::::     (LINEPLUS탈락이유)
+                    image=BitmapManager.bitmapToByte(bitmapgrid2);
+                    imageclickcheck2=false;
+                    dbcheckgrid2=true;  ///삭제했을때 남아있게끔 copycat이아닌 방식으로 
+                }else if(imageclickcheck3 ||!dbcheckgrid3){
+                    image=BitmapManager.bitmapToByte(bitmapgrid3);
+                    imageclickcheck3=false;
+                    dbcheckgrid3=true;
+                }else if(imageclickcheck4 ||!dbcheckgrid4){
+                    image=BitmapManager.bitmapToByte(bitmapgrid4);
+                    imageclickcheck4=false;
+                    dbcheckgrid4=true;
+                }else if(imageclickcheck5 || !dbcheckgrid5){
+                    image=BitmapManager.bitmapToByte(bitmapgrid5);
+                    imageclickcheck5=false;
+                    dbcheckgrid5=true;
+                }
             } else
                 image = BitmapManager.bitmapToByte(bitmapthumb);
-
         } else {
             Drawable drawable = getResources().getDrawable(R.drawable.ic_check_box_outline_blank_black_24dp);
             bitmap = getBitmap((VectorDrawable) drawable);
             image = BitmapManager.bitmapToByte(bitmap);
+            if(imageclickcheck2){
+                image=BitmapManager.bitmapToByte(bitmapgrid2);
+               imageclickcheck2=false;
+            }else if(imageclickcheck3){
+                image=BitmapManager.bitmapToByte(bitmapgrid3);
+                imageclickcheck3=false;
+            }else if(imageclickcheck4){
+                image=BitmapManager.bitmapToByte(bitmapgrid4);
+                imageclickcheck4=false;
+            }else if(imageclickcheck5){
+                image=BitmapManager.bitmapToByte(bitmapgrid5);
+                imageclickcheck5=false;
+            }
             //   Log.v("체크지점3","체크지점3");
         }
         /*  썸네일 아닌 나머지   */
@@ -282,6 +311,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 tmp.setText(text);
                 tmp.setDate(date);
                 tmp.setBody(textbody);
+               // if()
                 tmp.setImage(image);
                 tmp.setGridimage2(imagegrid2);
                 tmp.setGridimage3(imagegrid3);
