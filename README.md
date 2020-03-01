@@ -4,6 +4,14 @@
 ![LinecodingTest](https://user-images.githubusercontent.com/40031858/74128902-a55a1f00-4c21-11ea-9ccf-b11d3ae5625f.JPG)
 
 
+## 기술 스택
+- 사용 언어 : JAVA
+- 이미지 및 스플래시 처리 라이브러리 : [Glide](https://github.com/bumptech/glide)
+- DB: [Room](https://developer.android.com/topic/libraries/architecture/room)
+
+
+------------------
+
 ## Android Memo App Attaches Photos and Supports Thumbnails (If you don't have a thumbnail, you won't see it)
 
 <details>
