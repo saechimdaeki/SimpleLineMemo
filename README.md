@@ -9,6 +9,57 @@
 - 이미지 및 스플래시 처리 라이브러리 : [Glide](https://github.com/bumptech/glide)
 - DB: [Room](https://developer.android.com/topic/libraries/architecture/room)
 
+DB설계 
+<code>
+ 
+     @Dao
+    public interface NotesDao {
+    
+     
+     * @param note
+     
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertNote(Note note);
+     * @param note that will be delete
+    @Delete
+    void deleteNote(Note... note);
+     * @param note the note that will be update
+    @Update
+    void updateNote(Note note);
+     * @return list of Notes
+    @Query("SELECT * FROM notes")
+    List<Note> getNotes();
+     * @param noteId note id
+     * @return Note
+    @Query("SELECT * FROM notes WHERE id = :noteId")
+    Note getNoteById(int noteId);
+     * Delete Note by Id from DataBase
+     * @param noteId
+    @Query("DELETE FROM notes WHERE id = :noteId")
+    void deleteNoteById(int noteId);
+    }
+ </code>
+<code>
+    
+      @Database(entities = Note.class, version = 1, exportSchema = false)
+     public abstract class NotesDB extends RoomDatabase {
+     public static final String DATABSE_NAME = "notesDb";
+    private static NotesDB instance;
+
+    public static NotesDB getInstance(Context context) {
+        if (instance == null)
+            instance = Room.databaseBuilder(context, NotesDB.class, DATABSE_NAME)
+                    .allowMainThreadQueries()
+                    .build();
+        return instance;
+    }
+
+    public abstract NotesDao notesDao();
+    }
+ 
+</code>
+
+
 
 ------------------
 
